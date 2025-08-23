@@ -2,6 +2,36 @@
 
 An iPad-optimized blog editing app with layered drawing capabilities, Apple Pencil support, and direct publishing features.
 
+- [Blog Editor - React Native Expo App](#blog-editor---react-native-expo-app)
+  - [🎯 Project Overview](#-project-overview)
+  - [✨ Key Features](#-key-features)
+  - [🛠 Technology Stack](#-technology-stack)
+  - [📁 Project Structure](#-project-structure)
+  - [🚀 Getting Started](#-getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [🔄 Development Loop](#-development-loop)
+    - [Quick Start Commands](#quick-start-commands)
+    - [Building the App](#building-the-app)
+    - [iPad Testing on PC](#ipad-testing-on-pc)
+    - [Required Dependencies](#required-dependencies)
+  - [🎨 Core Features Implementation](#-core-features-implementation)
+    - [Drawing System](#drawing-system)
+    - [Export System](#export-system)
+    - [Publishing Integration](#publishing-integration)
+  - [📱 Target Platform](#-target-platform)
+  - [Development Roadmap](#development-roadmap)
+    - [Phase 1: Core Drawing \& Text Editing (MVP)](#phase-1-core-drawing--text-editing-mvp)
+    - [Phase 2: Enhanced Drawing Features](#phase-2-enhanced-drawing-features)
+    - [Phase 3: Export \& Publishing](#phase-3-export--publishing)
+    - [Phase 4: Polish \& Optimization](#phase-4-polish--optimization)
+  - [🧪 Testing](#-testing)
+  - [🤝 Contributing](#-contributing)
+  - [📄 License](#-license)
+  - [🙏 Acknowledgments](#-acknowledgments)
+  - [📞 Support](#-support)
+
+
 ## 🎯 Project Overview
 
 This app allows you to write and edit blog entries with pen input support, create layered annotations, and publish directly to your website. Designed specifically for iPad with Apple Pencil integration.
@@ -87,6 +117,64 @@ npx expo start
 npx expo run:ios
 ```
 
+## 🔄 Development Loop
+
+### Quick Start Commands
+
+```bash
+# Start development server
+npm start
+
+# Test on web browser (recommended for PC development)
+npm run web
+
+# Test on iPad simulator (requires macOS)
+npm run ipad-sim
+
+# Target iPad device specifically
+npm run ipad
+
+# Run tests
+npm test
+```
+
+### Building the App
+
+```bash
+# Build for all platforms
+npm run build
+
+# Build for iOS only
+npm run build:ios
+
+# Build for Android only
+npm run build:android
+```
+
+### iPad Testing on PC
+
+Since you're developing on Windows for iPad, here are the recommended approaches:
+
+1. **Web Development & Testing:**
+   ```bash
+   npm run web
+   ```
+   - Open in Chrome and use DevTools
+   - Simulate iPad screen size (1024x768 or 2048x1536)
+   - Test touch interactions
+
+2. **Physical iPad Testing:**
+   ```bash
+   npm start
+   ```
+   - Install Expo Go app on your iPad
+   - Scan the QR code to test on real device
+   - Best for testing Apple Pencil functionality
+
+3. **Cloud iOS Simulators:**
+   - Use services like BrowserStack or Sauce Labs
+   - Test iOS behavior without owning a Mac
+
 ### Required Dependencies
 
 The app uses the following key dependencies:
@@ -137,14 +225,14 @@ This app is specifically designed and optimized for:
 - **iOS 14+**
 - **Apple Pencil** (1st and 2nd generation)
 
-## 🚧 Development Phases
+## Development Roadmap
 
 ### Phase 1: Core Drawing & Text Editing (MVP)
-- [x] Basic text editor
-- [x] Simple drawing with pen input
-- [x] Layer system (add/remove/toggle visibility)
-- [x] Basic tool palette (pen, highlighter, eraser)
-- [x] Local storage for posts
+- [ ] Basic text editor
+- [ ] Simple drawing with pen input
+- [ ] Layer system (add/remove/toggle visibility)
+- [ ] Basic tool palette (pen, highlighter, eraser)
+- [ ] Local storage for posts
 
 ### Phase 2: Enhanced Drawing Features
 - [ ] Pressure sensitivity
