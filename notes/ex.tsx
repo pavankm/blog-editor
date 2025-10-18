@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { PenTool, FileText, Upload, Check, Edit3, Github } from "lucide-react";
 import "./ex.css";
 import ScreenSelector from "../src/components/navigation/ScreenSelector";
+import { Screen } from "../src/components/navigation/types";
+import BottomToolbar from "../src/components/toolbar/BottomToolbar";
+import CanvasScreen from "../src/screens/EditorScreen/CanvasScreen";
 
 export default function BlogAppUI() {
-  const [screen, setScreen] = useState("canvas");
+  const [screen, setScreen] = useState<Screen>("canvas");
 
   const posts = [
     { title: "Stillness in Motion", date: "2025-10-15", status: "published" },
@@ -21,89 +24,7 @@ export default function BlogAppUI() {
       <ScreenSelector currentScreen={screen} onScreenSelect={setScreen} />
 
       {/* Canvas Screen */}
-      {screen === "canvas" && (
-        <div className="screen">
-          {/* Minimal Top Bar */}
-          <div className="top-bar">
-            <div className="top-bar-content">
-              <div className="top-bar-left">
-                <div className="status-dot"></div>
-                <h1 className="screen-title">New Composition</h1>
-              </div>
-
-              <div className="top-bar-right">
-                <button className="button button-secondary">
-                  <FileText className="w-4 h-4" />
-                  <span>Preview</span>
-                </button>
-                <button className="button button-primary">
-                  <Upload className="w-4 h-4" />
-                  <span>Publish</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Canvas Area with Washi Paper Texture */}
-          <div className="canvas-area">
-            <div className="canvas">
-              {/* Subtle Texture Overlay */}
-              <div
-                className="texture-overlay"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E")`,
-                }}
-              ></div>
-
-              <div className="canvas-placeholder">
-                <div className="canvas-placeholder-content">
-                  <div className="placeholder-icon-container">
-                    <PenTool className="placeholder-icon" strokeWidth={1.5} />
-                  </div>
-                  <p className="placeholder-text">Begin your story</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Minimalist Toolbar */}
-          <div className="bottom-toolbar">
-            <div className="toolbar-content">
-              <div className="toolbar-left">
-                <button className="tool-button">
-                  <Edit3 className="tool-icon" strokeWidth={1.5} />
-                </button>
-                <div className="divider"></div>
-                <div className="brush-options">
-                  <span className="brush-label">Brush</span>
-                  <div className="brush-sizes">
-                    <button className="brush-size-button selected">
-                      <div
-                        className="brush-dot"
-                        style={{ width: "0.25rem", height: "0.25rem" }}
-                      ></div>
-                    </button>
-                    <button className="brush-size-button unselected">
-                      <div
-                        className="brush-dot"
-                        style={{ width: "0.375rem", height: "0.375rem" }}
-                      ></div>
-                    </button>
-                    <button className="brush-size-button unselected">
-                      <div
-                        className="brush-dot"
-                        style={{ width: "0.625rem", height: "0.625rem" }}
-                      ></div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <button className="clear-button">Clear</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {screen === "canvas" && <CanvasScreen />}
 
       {/* Preview Screen */}
       {screen === "preview" && (
