@@ -1,0 +1,587 @@
+/* d:/hacks/editor/notes/ex.css */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.blog-app {
+  width: 100%;
+  height: 100vh;
+  background-color: #f5f5f4;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-border {
+  height: 0.25rem;
+  background-image: linear-gradient(to right, #fffbeb, #ffe4e6, #fffbeb);
+}
+
+.screen-selector {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid rgba(229, 228, 226, 0.5);
+  padding: 1.5rem;
+}
+
+.screen-selector-content {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.screen-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 300;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+  background-color: rgba(245, 245, 244, 0.5);
+  color: #57534e;
+  border: none;
+  cursor: pointer;
+}
+
+.screen-button:hover {
+  background-color: #f5f5f4;
+}
+
+.screen-button.active {
+  background-color: #292524;
+  color: #fafaf9;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.top-bar {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(229, 228, 226, 0.5);
+}
+
+.top-bar-content {
+  max-width: 96rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: #fecaca;
+}
+
+.screen-title {
+  font-size: 1.125rem;
+  font-weight: 300;
+  color: #44403c;
+  letter-spacing: 0.05em;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.button {
+  padding: 0.625rem 1.25rem;
+  border-radius: 9999px;
+  font-weight: 300;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.button-secondary {
+  background-color: rgba(245, 245, 244, 0.5);
+  color: #57534e;
+}
+
+.button-secondary:hover {
+  background-color: #f5f5f4;
+}
+
+.button-primary {
+  background-color: #292524;
+  color: #fafaf9;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.button-primary:hover {
+  background-color: #1c1917;
+}
+
+.canvas-area {
+  flex: 1;
+  padding: 2rem;
+}
+
+.canvas {
+  max-width: 80rem;
+  margin: 0 auto;
+  height: 100%;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(229, 228, 226, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.texture-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+}
+
+.canvas-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas-placeholder-content {
+  text-align: center;
+}
+
+.placeholder-icon-container {
+  width: 5rem;
+  height: 5rem;
+  margin: 0 auto 1.5rem auto;
+  border-radius: 9999px;
+  background-image: linear-gradient(to bottom right, #ffe4e6, #fffbeb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #57534e;
+}
+
+.placeholder-text {
+  color: #a8a29e;
+  font-size: 1.125rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.bottom-toolbar {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(229, 228, 226, 0.5);
+  padding: 1.5rem;
+}
+
+.toolbar-content {
+  max-width: 96rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tool-button {
+  width: 3rem;
+  height: 3rem;
+  background-color: #292524;
+  color: white;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.tool-button:hover {
+  background-color: #1c1917;
+}
+
+.tool-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.divider {
+  height: 2rem;
+  width: 1px;
+  background-color: #e5e4e2;
+}
+
+.brush-options {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brush-label {
+  font-size: 0.875rem;
+  color: #78716c;
+  font-weight: 300;
+}
+
+.brush-sizes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.brush-size-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.brush-size-button.selected {
+  border: 2px solid #292524;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.brush-size-button.unselected {
+  border: 1px solid #d6d3d1;
+}
+
+.brush-size-button.unselected:hover {
+  border-color: #a8a29e;
+}
+
+.brush-dot {
+  background-color: #292524;
+  border-radius: 9999px;
+}
+
+.clear-button {
+  padding: 0.625rem 1.25rem;
+  background-color: rgba(245, 245, 244, 0.5);
+  color: #57534e;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  font-weight: 300;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.content-area {
+  flex: 1;
+  overflow: auto;
+  padding: 2rem;
+}
+
+.content {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(229, 228, 226, 0.5);
+  padding: 2rem;
+}
+
+.card-header {
+  font-size: 1rem;
+  font-weight: 300;
+  color: #44403c;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #78716c;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 0;
+  border: none;
+  border-bottom: 1px solid #e5e4e2;
+  outline: none;
+  background-color: transparent;
+  font-weight: 300;
+  color: #292524;
+  transition: all 0.2s;
+}
+
+.form-input::placeholder {
+  color: #d6d3d1;
+}
+
+.form-input:focus {
+  border-bottom-color: #a8a29e;
+}
+
+.grid-2-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.textarea {
+  width: 100%;
+  height: 24rem;
+  padding: 0;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-weight: 300;
+  color: #44403c;
+  line-height: 1.625;
+  resize: none;
+}
+
+.textarea::placeholder {
+  color: #d6d3d1;
+}
+
+.post-list {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.post-item {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(229, 228, 226, 0.5);
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.post-item:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.post-item-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.post-details {
+  flex: 1;
+}
+
+.post-title-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.post-status-dot.published {
+  background-color: #86efac;
+}
+
+.post-status-dot.draft {
+  background-color: #fde047;
+}
+
+.post-title {
+  font-size: 1rem;
+  font-weight: 300;
+  color: #292524;
+  letter-spacing: 0.05em;
+}
+
+.post-date {
+  font-size: 0.875rem;
+  color: #a8a29e;
+  font-weight: 300;
+  margin-left: 1.25rem;
+}
+
+.edit-button {
+  opacity: 0;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  color: #78716c;
+  transition: all 0.2s;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.post-item:hover .edit-button {
+  opacity: 1;
+}
+
+.edit-button:hover {
+  background-color: #f5f5f4;
+}
+
+.settings-content {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.github-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #44403c;
+}
+
+.verify-button {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.toggle-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f5f5f4;
+}
+
+.toggle-label p:first-child {
+  font-weight: 300;
+  color: #44403c;
+  margin-bottom: 0.25rem;
+}
+
+.toggle-label p:last-child {
+  font-size: 0.875rem;
+  color: #a8a29e;
+  font-weight: 300;
+}
+
+.toggle-button {
+  width: 2.75rem;
+  height: 1.5rem;
+  background-color: #292524;
+  border-radius: 9999px;
+  position: relative;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: none;
+  cursor: pointer;
+}
+
+.toggle-indicator {
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: white;
+  border-radius: 9999px;
+  position: absolute;
+  right: 0.125rem;
+  top: 0.125rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.about-card {
+  text-align: center;
+}
+
+.about-icon-container {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem auto;
+  border-radius: 9999px;
+  background-image: linear-gradient(to bottom right, #ffe4e6, #fffbeb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #57534e;
+}
+
+.app-name {
+  color: #57534e;
+  font-weight: 300;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+.app-version {
+  color: #a8a29e;
+  font-weight: 300;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}

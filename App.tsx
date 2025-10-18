@@ -1,7 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import PostListScreen from "./src/screens/PostListScreen/PostListScreen";
+import BlogAppNative from "./notes/BlogAppNative";
 
 export default function App() {
-  return <PostListScreen />;
+  return <BlogAppNative />;
 }
