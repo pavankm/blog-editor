@@ -5,6 +5,7 @@ interface BlogPost {
   published: boolean;
   createdAt: Date;
   updatedAt: Date;
+  coverImage?: string; // Optional cover image URL
 }
 
 export default BlogPost;
