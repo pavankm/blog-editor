@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - iPad Notes App</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #faf7ff 0%, #f0f8ff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        color: #5a4fcf;
+      }
+
+      .ipad-frame {
+        width: 1024px;
+        height: 768px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 3rem;
+        box-shadow: 0 20px 60px rgba(124, 111, 212, 0.15);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .toolbar {
+        height: 60px;
+        background: rgba(255, 255, 255, 0.8);
+        border-bottom: 1px solid rgba(124, 111, 212, 0.1);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .toolbar-left {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .tool-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        color: #5a4fcf;
+        border: 1px solid rgba(124, 111, 212, 0.1);
+      }
+
+      .tool-btn:hover {
+        background: rgba(124, 111, 212, 0.1);
+        transform: scale(1.05);
+      }
+
+      .toolbar-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #7c6fd4;
+        margin-left: 15px;
+      }
+
+      .main-content {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+      }
+
+      .sidebar {
+        width: 240px;
+        background: rgba(255, 255, 255, 0.8);
+        border-right: 1px solid rgba(124, 111, 212, 0.1);
+        overflow-y: auto;
+        padding: 20px 0;
+      }
+
+      .nav-section {
+        margin-bottom: 25px;
+      }
+
+      .nav-section-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: #7c6fd4;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0 20px;
+        margin-bottom: 10px;
+        opacity: 0.8;
+      }
+
+      .nav-item {
+        padding: 12px 20px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #5a4fcf;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+      }
+
+      .nav-item:hover {
+        background: rgba(124, 111, 212, 0.08);
+      }
+
+      .nav-item.active {
+        background: #7c6fd4;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(124, 111, 212, 0.25);
+      }
+
+      .nav-item svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .settings-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 40px 50px;
+      }
+
+      .settings-section {
+        margin-bottom: 40px;
+      }
+
+      .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #7c6fd4;
+        margin-bottom: 8px;
+      }
+
+      .section-description {
+        font-size: 14px;
+        color: #7c6fd4;
+        margin-bottom: 24px;
+        opacity: 0.8;
+      }
+
+      .settings-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(124, 111, 212, 0.15);
+        border-radius: 1.5rem;
+        padding: 0;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+
+      .setting-item {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(124, 111, 212, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .setting-item:last-child {
+        border-bottom: none;
+      }
+
+      .setting-info {
+        flex: 1;
+      }
+
+      .setting-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #7c6fd4;
+        margin-bottom: 4px;
+      }
+
+      .setting-hint {
+        font-size: 13px;
+        color: #7c6fd4;
+        opacity: 0.7;
+      }
+
+      .setting-control {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .text-input {
+        width: 300px;
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid rgba(124, 111, 212, 0.2);
+        border-radius: 1rem;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+        color: #5a4fcf;
+      }
+
+      .text-input::placeholder {
+        color: rgba(90, 79, 207, 0.5);
+      }
+
+      .text-input:focus {
+        border-color: #7c6fd4;
+        box-shadow: 0 0 0 3px rgba(124, 111, 212, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .btn-primary {
+        height: 40px;
+        padding: 0 20px;
+        background: #7c6fd4;
+        color: white;
+        border: none;
+        border-radius: 1.5rem;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(124, 111, 212, 0.2);
+      }
+
+      .btn-primary:hover {
+        background: #6b5cc4;
+        box-shadow: 0 8px 25px rgba(124, 111, 212, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        height: 40px;
+        padding: 0 20px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #7c6fd4;
+        border: 1px solid rgba(124, 111, 212, 0.2);
+        border-radius: 1.5rem;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(124, 111, 212, 0.08);
+        border-color: #7c6fd4;
+        transform: translateY(-2px);
+      }
+
+      .btn-danger {
+        height: 40px;
+        padding: 0 20px;
+        background: #ff9b9b;
+        color: white;
+        border: none;
+        border-radius: 1.5rem;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 155, 155, 0.2);
+      }
+
+      .btn-danger:hover {
+        background: #ff7b7b;
+        box-shadow: 0 8px 25px rgba(255, 155, 155, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .toggle-switch {
+        width: 50px;
+        height: 30px;
+        background: rgba(124, 111, 212, 0.2);
+        border-radius: 15px;
+        position: relative;
+        cursor: pointer;
+        transition: background 0.3s;
+        border: 1px solid rgba(124, 111, 212, 0.3);
+      }
+
+      .toggle-switch.active {
+        background: #98d8c8;
+        border-color: #98d8c8;
+      }
+
+      .toggle-slider {
+        width: 26px;
+        height: 26px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .toggle-switch.active .toggle-slider {
+        transform: translateX(20px);
+      }
+
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 1.2rem;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .status-badge.connected {
+        background: rgba(152, 216, 200, 0.2);
+        color: #2e7d32;
+        border: 1px solid rgba(152, 216, 200, 0.4);
+      }
+
+      .status-badge.disconnected {
+        background: rgba(255, 155, 155, 0.15);
+        color: #c62828;
+        border: 1px solid rgba(255, 155, 155, 0.3);
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .select-input {
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid rgba(124, 111, 212, 0.2);
+        border-radius: 1rem;
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+        min-width: 200px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #5a4fcf;
+        transition: all 0.3s ease;
+      }
+
+      .select-input:hover {
+        border-color: #7c6fd4;
+      }
+
+      .select-input:focus {
+        border-color: #7c6fd4;
+        box-shadow: 0 0 0 3px rgba(124, 111, 212, 0.1);
+      }
+      .info-box {
+        background: rgba(124, 111, 212, 0.08);
+        border: 1px solid rgba(124, 111, 212, 0.2);
+        border-radius: 1.5rem;
+        padding: 16px;
+        margin-top: 16px;
+        display: flex;
+        gap: 12px;
+      }
+
+      .info-box svg {
+        width: 20px;
+        height: 20px;
+        color: #7c6fd4;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .info-box-content {
+        flex: 1;
+      }
+
+      .info-box-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #007aff;
+        margin-bottom: 4px;
+      }
+
+      .info-box-text {
+        font-size: 13px;
+        color: #004085;
+        line-height: 1.5;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ipad-frame">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button class="tool-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+          <div class="toolbar-title">Settings</div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="sidebar">
+          <div class="nav-section">
+            <div class="nav-section-title">General</div>
+            <div class="nav-item active" data-section="github">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                ></path>
+              </svg>
+              GitHub
+            </div>
+            <div class="nav-item" data-section="hugo">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              Hugo Config
+            </div>
+            <div class="nav-item" data-section="editor">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+              </svg>
+              Editor
+            </div>
+          </div>
+
+          <div class="nav-section">
+            <div class="nav-section-title">Preferences</div>
+            <div class="nav-item" data-section="appearance">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              Appearance
+            </div>
+            <div class="nav-item" data-section="sync">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path
+                  d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+                ></path>
+              </svg>
+              Sync
+            </div>
+            <div class="nav-item" data-section="about">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              About
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-container" id="settingsContainer">
+          <!-- GitHub Section (Default) -->
+          <div class="settings-section" id="github-section">
+            <div class="section-title">GitHub Integration</div>
+            <div class="section-description">
+              Connect your GitHub repository to publish blog posts directly to
+              your static site.
+            </div>
+
+            <div class="settings-card">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Connection Status</div>
+                  <div class="setting-hint">
+                    Your GitHub account connection status
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="status-badge connected">
+                    <span class="status-dot"></span>
+                    Connected
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">GitHub Username</div>
+                  <div class="setting-hint">Your GitHub account username</div>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="text"
+                    class="text-input"
+                    value="username"
+                    placeholder="Enter username"
+                  />
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Repository</div>
+                  <div class="setting-hint">
+                    The repository where your Hugo site is hosted
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="text"
+                    class="text-input"
+                    value="my-blog"
+                    placeholder="repository-name"
+                  />
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Branch</div>
+                  <div class="setting-hint">Target branch for commits</div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>main</option>
+                    <option>master</option>
+                    <option>develop</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Content Path</div>
+                  <div class="setting-hint">
+                    Path to Hugo content folder (e.g., content/posts)
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="text"
+                    class="text-input"
+                    value="content/posts"
+                    placeholder="content/posts"
+                  />
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Auto-commit on Publish</div>
+                  <div class="setting-hint">
+                    Automatically commit and push when publishing posts
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="toggle-switch active">
+                    <div class="toggle-slider"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-box">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <div class="info-box-content">
+                <div class="info-box-title">Personal Access Token Required</div>
+                <div class="info-box-text">
+                  You'll need a GitHub Personal Access Token with repo
+                  permissions. Generate one in your GitHub Settings → Developer
+                  Settings → Personal Access Tokens.
+                </div>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn-primary">Test Connection</button>
+              <button class="btn-secondary">Disconnect</button>
+            </div>
+          </div>
+
+          <!-- Hugo Config Section -->
+          <div class="settings-section" id="hugo-section" style="display: none">
+            <div class="section-title">Hugo Configuration</div>
+            <div class="section-description">
+              Configure how your posts are formatted and published to Hugo.
+            </div>
+
+            <div class="settings-card">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Default Author</div>
+                  <div class="setting-hint">Author name for new posts</div>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="text"
+                    class="text-input"
+                    value="John Doe"
+                    placeholder="Your name"
+                  />
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Date Format</div>
+                  <div class="setting-hint">
+                    Format for dates in frontmatter
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>YYYY-MM-DD</option>
+                    <option>YYYY-MM-DDTHH:MM:SS</option>
+                    <option>MM/DD/YYYY</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Frontmatter Format</div>
+                  <div class="setting-hint">
+                    Markup format for post metadata
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>YAML</option>
+                    <option>TOML</option>
+                    <option>JSON</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Slug Generation</div>
+                  <div class="setting-hint">
+                    Automatically generate URL-friendly slugs
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="toggle-switch active">
+                    <div class="toggle-slider"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Default Categories</div>
+                  <div class="setting-hint">
+                    Comma-separated default categories
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <input
+                    type="text"
+                    class="text-input"
+                    value="blog, tech"
+                    placeholder="category1, category2"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Editor Section -->
+          <div
+            class="settings-section"
+            id="editor-section"
+            style="display: none"
+          >
+            <div class="section-title">Editor Preferences</div>
+            <div class="section-description">
+              Customize your writing and note-taking experience.
+            </div>
+
+            <div class="settings-card">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Default Pen Color</div>
+                  <div class="setting-hint">Color for new drawing strokes</div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>Black</option>
+                    <option>Blue</option>
+                    <option>Red</option>
+                    <option>Green</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Default Pen Thickness</div>
+                  <div class="setting-hint">Stroke width for pen tool</div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>Fine (1-2)</option>
+                    <option>Medium (3-4)</option>
+                    <option>Bold (5-7)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Markdown Preview</div>
+                  <div class="setting-hint">
+                    Show live preview while editing markdown
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="toggle-switch active">
+                    <div class="toggle-slider"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Auto-save</div>
+                  <div class="setting-hint">
+                    Automatically save changes every 30 seconds
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="toggle-switch active">
+                    <div class="toggle-slider"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Spell Check</div>
+                  <div class="setting-hint">Check spelling while typing</div>
+                </div>
+                <div class="setting-control">
+                  <div class="toggle-switch active">
+                    <div class="toggle-slider"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appearance Section -->
+          <div
+            class="settings-section"
+            id="appearance-section"
+            style="display: none"
+          >
+            <div class="section-title">Appearance</div>
+            <div class="section-description">
+              Customize the look and feel of your app.
+            </div>
+
+            <div class="settings-card">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Theme</div>
+                  <div class="setting-hint">Choose your preferred theme</div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>Light</option>
+                    <option>Dark</option>
+                    <option>Auto (System)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Font Size</div>
+                  <div class="setting-hint">Base font size for editor</div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                    <option>Extra Large</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Compact Mode</div>
+                  <div class="setting-hint">
+                    Reduce spacing for more content on screen
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <div class="toggle-switch">
+                    <div class="toggle-slider"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sync Section -->
+          <div class="settings-section" id="sync-section" style="display: none">
+            <div class="section-title">Sync & Backup</div>
+            <div class="section-description">
+              Manage how your data is synced and backed up.
+            </div>
+
+            <div class="settings-card">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Auto-sync</div>
+                  <div class="setting-hint">Automatically sync with GitHub</div>
+                </div>
+                <div class="setting-control">
+                  <div class="toggle-switch active">
+                    <div class="toggle-slider"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Sync Frequency</div>
+                  <div class="setting-hint">How often to sync changes</div>
+                </div>
+                <div class="setting-control">
+                  <select class="select-input">
+                    <option>Every 5 minutes</option>
+                    <option>Every 15 minutes</option>
+                    <option>Every 30 minutes</option>
+                    <option>Manual only</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Last Sync</div>
+                  <div class="setting-hint">2 minutes ago</div>
+                </div>
+                <div class="setting-control">
+                  <button class="btn-secondary">Sync Now</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn-primary">Create Backup</button>
+              <button class="btn-secondary">Restore from Backup</button>
+            </div>
+          </div>
+
+          <!-- About Section -->
+          <div
+            class="settings-section"
+            id="about-section"
+            style="display: none"
+          >
+            <div class="section-title">About</div>
+            <div class="section-description">
+              Information about this app and support resources.
+            </div>
+
+            <div class="settings-card">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Version</div>
+                  <div class="setting-hint">Current app version</div>
+                </div>
+                <div class="setting-control">
+                  <span style="font-size: 14px; color: #666">1.0.0</span>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <div class="setting-label">Check for Updates</div>
+                  <div class="setting-hint">
+                    You're running the latest version
+                  </div>
+                </div>
+                <div class="setting-control">
+                  <button class="btn-secondary">Check Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

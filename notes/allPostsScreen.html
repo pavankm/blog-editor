@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Posts - iPad Notes App</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #faf7ff 0%, #f0f8ff 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        color: #5a4fcf;
+      }
+
+      .ipad-frame {
+        width: 1024px;
+        height: 768px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 3rem;
+        box-shadow: 0 20px 60px rgba(124, 111, 212, 0.15);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .toolbar {
+        height: 60px;
+        background: rgba(255, 255, 255, 0.8);
+        border-bottom: 1px solid rgba(124, 111, 212, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .toolbar-left {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .toolbar-center {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .toolbar-right {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .tool-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 1.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        color: #5a4fcf;
+        border: 1px solid rgba(124, 111, 212, 0.1);
+      }
+
+      .tool-btn:hover {
+        background: rgba(124, 111, 212, 0.1);
+        transform: scale(1.05);
+      }
+
+      .tool-btn.active {
+        background: #7c6fd4;
+        color: white;
+        box-shadow: 0 8px 25px rgba(124, 111, 212, 0.3);
+      }
+
+      .search-bar {
+        width: 400px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(124, 111, 212, 0.2);
+        border-radius: 2rem;
+        padding: 0 16px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.3s ease;
+        color: #5a4fcf;
+      }
+
+      .search-bar::placeholder {
+        color: rgba(90, 79, 207, 0.5);
+      }
+
+      .search-bar:focus {
+        border-color: #7c6fd4;
+        box-shadow: 0 0 0 3px rgba(124, 111, 212, 0.1);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .new-post-btn {
+        height: 40px;
+        padding: 0 20px;
+        background: #7c6fd4;
+        color: white;
+        border: none;
+        border-radius: 1.5rem;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(124, 111, 212, 0.2);
+      }
+
+      .new-post-btn:hover {
+        background: #6b5cc4;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(124, 111, 212, 0.3);
+      }
+
+      .main-content {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+      }
+
+      .sidebar {
+        width: 220px;
+        background: rgba(255, 255, 255, 0.8);
+        border-right: 1px solid rgba(124, 111, 212, 0.1);
+        overflow-y: auto;
+        padding: 20px 0;
+      }
+
+      .filter-section {
+        padding: 0 20px;
+        margin-bottom: 25px;
+      }
+
+      .filter-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: #7c6fd4;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+        opacity: 0.8;
+      }
+
+      .filter-item {
+        padding: 10px 12px;
+        margin-bottom: 4px;
+        border-radius: 1.5rem;
+        cursor: pointer;
+        font-size: 14px;
+        color: #5a4fcf;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.3s ease;
+      }
+
+      .filter-item:hover {
+        background: rgba(124, 111, 212, 0.08);
+      }
+
+      .filter-item.active {
+        background: #7c6fd4;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(124, 111, 212, 0.25);
+      }
+
+      .filter-count {
+        font-size: 12px;
+        color: #7c6fd4;
+        background: rgba(124, 111, 212, 0.1);
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+
+      .filter-item.active .filter-count {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+      }
+
+      .posts-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 30px 40px;
+      }
+
+      .posts-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .posts-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #7c6fd4;
+      }
+
+      .sort-dropdown {
+        height: 36px;
+        padding: 0 12px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(124, 111, 212, 0.2);
+        border-radius: 1rem;
+        font-size: 13px;
+        cursor: pointer;
+        outline: none;
+        color: #5a4fcf;
+        transition: all 0.3s ease;
+      }
+
+      .sort-dropdown:hover {
+        border-color: #7c6fd4;
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .sort-dropdown:focus {
+        border-color: #7c6fd4;
+        box-shadow: 0 0 0 3px rgba(124, 111, 212, 0.1);
+      }
+
+      .post-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(124, 111, 212, 0.15);
+        border-radius: 1.5rem;
+        padding: 20px;
+        margin-bottom: 16px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+      }
+
+      .post-card:hover {
+        border-color: #7c6fd4;
+        box-shadow: 0 12px 35px rgba(124, 111, 212, 0.15);
+        transform: translateY(-4px);
+      }
+
+      .post-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .post-title-section {
+        flex: 1;
+      }
+
+      .post-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 1.2rem;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .post-status.published {
+        background: rgba(152, 216, 200, 0.2);
+        color: #2e7d32;
+        border: 1px solid rgba(152, 216, 200, 0.4);
+      }
+
+      .post-status.draft {
+        background: rgba(255, 155, 155, 0.15);
+        color: #c62828;
+        border: 1px solid rgba(255, 155, 155, 0.3);
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+
+      .post-status.published .status-dot {
+        background: #2e7d32;
+      }
+
+      .post-status.draft .status-dot {
+        background: #e65100;
+      }
+
+      .post-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #7c6fd4;
+        margin-bottom: 6px;
+      }
+
+      .post-meta {
+        display: flex;
+        gap: 16px;
+        font-size: 13px;
+        color: #7c6fd4;
+        margin-bottom: 12px;
+        opacity: 0.8;
+      }
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .meta-item svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .post-description {
+        font-size: 14px;
+        color: #5a4fcf;
+        line-height: 1.6;
+        margin-bottom: 12px;
+        opacity: 0.85;
+      }
+
+      .post-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        padding: 4px 10px;
+        background: rgba(124, 111, 212, 0.1);
+        border-radius: 0.8rem;
+        font-size: 12px;
+        color: #7c6fd4;
+        border: 1px solid rgba(124, 111, 212, 0.2);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: #7c6fd4;
+        opacity: 0.7;
+      }
+
+      .empty-state svg {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+      }
+
+      .empty-state-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #7c6fd4;
+        margin-bottom: 8px;
+      }
+
+      .empty-state-text {
+        font-size: 14px;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(124, 111, 212, 0.3);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(124, 111, 212, 0.6);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ipad-frame">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button class="tool-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="toolbar-center">
+          <input
+            type="text"
+            class="search-bar"
+            placeholder="Search posts..."
+            id="searchBar"
+          />
+        </div>
+
+        <div class="toolbar-right">
+          <button class="new-post-btn">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            New Post
+          </button>
+          <button class="tool-btn">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="12" cy="5" r="1"></circle>
+              <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="sidebar">
+          <div class="filter-section">
+            <div class="filter-title">Status</div>
+            <div class="filter-item active" data-filter="all">
+              <span>All Posts</span>
+              <span class="filter-count">12</span>
+            </div>
+            <div class="filter-item" data-filter="published">
+              <span>Published</span>
+              <span class="filter-count">8</span>
+            </div>
+            <div class="filter-item" data-filter="draft">
+              <span>Drafts</span>
+              <span class="filter-count">4</span>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title">Categories</div>
+            <div class="filter-item" data-filter="technology">
+              <span>Technology</span>
+              <span class="filter-count">5</span>
+            </div>
+            <div class="filter-item" data-filter="design">
+              <span>Design</span>
+              <span class="filter-count">4</span>
+            </div>
+            <div class="filter-item" data-filter="tutorial">
+              <span>Tutorial</span>
+              <span class="filter-count">3</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="posts-container" id="postsContainer">
+          <div class="posts-header">
+            <h1 class="posts-title">All Posts</h1>
+            <select class="sort-dropdown">
+              <option>Sort by: Most Recent</option>
+              <option>Sort by: Oldest</option>
+              <option>Sort by: Title A-Z</option>
+              <option>Sort by: Last Modified</option>
+            </select>
+          </div>
+
+          <div id="postsList">
+            <!-- Posts will be rendered here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const posts = [
+        {
+          title: "Building a Modern Note-Taking App",
+          status: "published",
+          date: "2024-03-15",
+          modified: "2024-03-16",
+          description:
+            "A comprehensive guide to building a feature-rich note-taking application with pen support and infinite scrolling.",
+          tags: ["Technology", "Tutorial", "JavaScript"],
+          category: "technology",
+        },
+        {
+          title: "Design Principles for iPad Apps",
+          status: "draft",
+          date: "2024-03-10",
+          modified: "2024-03-14",
+          description:
+            "Exploring the key design principles that make iPad applications feel native and intuitive to users.",
+          tags: ["Design", "iOS", "UX"],
+          category: "design",
+        },
+        {
+          title: "Introduction to Hugo Static Site Generator",
+          status: "published",
+          date: "2024-03-08",
+          modified: "2024-03-08",
+          description:
+            "Learn how to set up and configure Hugo for your blog, including themes, content management, and deployment.",
+          tags: ["Hugo", "Web Development", "Tutorial"],
+          category: "tutorial",
+        },
+        {
+          title: "CSS Grid vs Flexbox: When to Use Each",
+          status: "published",
+          date: "2024-03-05",
+          modified: "2024-03-06",
+          description:
+            "Understanding the differences between CSS Grid and Flexbox, and knowing when to use each layout system.",
+          tags: ["CSS", "Web Development", "Design"],
+          category: "technology",
+        },
+        {
+          title: "Markdown Best Practices for Developers",
+          status: "draft",
+          date: "2024-03-01",
+          modified: "2024-03-12",
+          description:
+            "A collection of tips and tricks for writing clean, readable Markdown documentation that developers will love.",
+          tags: ["Markdown", "Documentation", "Tutorial"],
+          category: "tutorial",
+        },
+        {
+          title: "Creating Smooth Animations with JavaScript",
+          status: "published",
+          date: "2024-02-28",
+          modified: "2024-02-28",
+          description:
+            "Techniques for creating buttery-smooth animations using requestAnimationFrame and CSS transforms.",
+          tags: ["JavaScript", "Animation", "Performance"],
+          category: "technology",
+        },
+        {
+          title: "Color Theory for UI Designers",
+          status: "published",
+          date: "2024-02-25",
+          modified: "2024-02-26",
+          description:
+            "Understanding color psychology and how to create harmonious color palettes for user interfaces.",
+          tags: ["Design", "Color Theory", "UI"],
+          category: "design",
+        },
+        {
+          title: "Optimizing Web Performance in 2024",
+          status: "draft",
+          date: "2024-02-20",
+          modified: "2024-03-13",
+          description:
+            "Latest techniques and tools for improving web performance, from lazy loading to code splitting.",
+          tags: ["Performance", "Web Development", "Optimization"],
+          category: "technology",
+        },
+        {
+          title: "Typography Fundamentals",
+          status: "published",
+          date: "2024-02-15",
+          modified: "2024-02-15",
+          description:
+            "Essential typography principles every designer should know, from font pairing to hierarchy.",
+          tags: ["Design", "Typography", "Fundamentals"],
+          category: "design",
+        },
+        {
+          title: "Getting Started with Canvas API",
+          status: "draft",
+          date: "2024-02-10",
+          modified: "2024-03-11",
+          description:
+            "A beginner-friendly introduction to the HTML5 Canvas API for creating graphics and animations.",
+          tags: ["JavaScript", "Canvas", "Tutorial"],
+          category: "tutorial",
+        },
+        {
+          title: "Responsive Design Patterns",
+          status: "published",
+          date: "2024-02-05",
+          modified: "2024-02-05",
+          description:
+            "Common responsive design patterns and when to use them for better mobile experiences.",
+          tags: ["Design", "Responsive", "Mobile"],
+          category: "design",
+        },
+        {
+          title: "Working with Git Branches Effectively",
+          status: "published",
+          date: "2024-02-01",
+          modified: "2024-02-02",
+          description:
+            "Best practices for managing Git branches in team projects and maintaining a clean commit history.",
+          tags: ["Git", "Development", "Workflow"],
+          category: "technology",
+        },
+      ];
+
+      let currentFilter = "all";
+      let searchQuery = "";
+
+      function renderPosts() {
+        const postsList = document.getElementById("postsList");
+        const filteredPosts = posts.filter((post) => {
+          const matchesFilter =
+            currentFilter === "all" ||
+            post.status === currentFilter ||
+            post.category === currentFilter;
+          const matchesSearch =
+            searchQuery === "" ||
+            post.title.toLowerCase().includes(searchQuery) ||
+            post.description.toLowerCase().includes(searchQuery) ||
+            post.tags.some((tag) => tag.toLowerCase().includes(searchQuery));
+          return matchesFilter && matchesSearch;
+        });
+
+        if (filteredPosts.length === 0) {
+          postsList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <div class="empty-state-title">No posts found</div>
+                        <div class="empty-state-text">Try adjusting your filters or search query</div>
+                    </div>
+                `;
+          return;
+        }
+
+        postsList.innerHTML = filteredPosts
+          .map(
+            (post) => `
+                <div class="post-card" data-status="${post.status}">
+                    <div class="post-header">
+                        <div class="post-title-section">
+                            <div class="post-title">${post.title}</div>
+                        </div>
+                        <div class="post-status ${post.status}">
+                            <span class="status-dot"></span>
+                            ${
+                              post.status.charAt(0).toUpperCase() +
+                              post.status.slice(1)
+                            }
+                        </div>
+                    </div>
+                    <div class="post-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            ${formatDate(post.date)}
+                        </div>
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Modified ${formatDate(post.modified)}
+                        </div>
+                    </div>
+                    <div class="post-description">${post.description}</div>
+                    <div class="post-tags">
+                        ${post.tags
+                          .map((tag) => `<span class="tag">${tag}</span>`)
+                          .join("")}
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { month: "short", day: "numeric", year: "numeric" };
+        return date.toLocaleDateString("en-US", options);
+      }
+
+      // Filter handling
+      document.querySelectorAll(".filter-item").forEach((item) => {
+        item.addEventListener("click", function () {
+          const section = this.closest(".filter-section");
+          section
+            .querySelectorAll(".filter-item")
+            .forEach((i) => i.classList.remove("active"));
+          this.classList.add("active");
+          currentFilter = this.dataset.filter;
+
+          const filterText = this.querySelector("span").textContent;
+          document.querySelector(".posts-title").textContent = filterText;
+
+          renderPosts();
+        });
+      });
+
+      // Search handling
+      document
+        .getElementById("searchBar")
+        .addEventListener("input", function (e) {
+          searchQuery = e.target.value.toLowerCase();
+          renderPosts();
+        });
+
+      // Post card click handling
+      document
+        .getElementById("postsList")
+        .addEventListener("click", function (e) {
+          const card = e.target.closest(".post-card");
+          if (card) {
+            console.log(
+              "Post clicked:",
+              card.querySelector(".post-title").textContent
+            );
+            // Navigate to post editor
+          }
+        });
+
+      // Initial render
+      renderPosts();
+    </script>
+  </body>
+</html>

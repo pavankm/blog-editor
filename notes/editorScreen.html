@@ -347,6 +347,177 @@
         box-shadow: 0 8px 25px rgba(124, 111, 212, 0.25);
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
+
+      .preview-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(92, 79, 207, 0.3);
+        z-index: 200;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .preview-modal.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .preview-panel {
+        background: linear-gradient(135deg, #faf7ff 0%, #f0f8ff 100%);
+        border-radius: 2rem;
+        box-shadow: 0 25px 60px rgba(124, 111, 212, 0.2);
+        width: 90%;
+        max-width: 800px;
+        height: 90%;
+        max-height: 700px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        animation: slideUp 0.3s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(40px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .preview-header {
+        padding: 2rem;
+        border-bottom: 1px solid rgba(124, 111, 212, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .preview-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #7c6fd4;
+        margin: 0;
+      }
+
+      .preview-close {
+        background: rgba(124, 111, 212, 0.1);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #7c6fd4;
+        font-size: 24px;
+        transition: all 0.3s ease;
+      }
+
+      .preview-close:hover {
+        background: rgba(124, 111, 212, 0.2);
+        transform: scale(1.1);
+      }
+
+      .preview-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+      }
+
+      .blog-post {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        line-height: 1.8;
+        color: #5a4fcf;
+      }
+
+      .blog-post h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #7c6fd4;
+        font-weight: 700;
+      }
+
+      .blog-post-meta {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid rgba(124, 111, 212, 0.1);
+        font-size: 0.95rem;
+        opacity: 0.8;
+      }
+
+      .blog-post-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .blog-post p {
+        margin-bottom: 1.5rem;
+        text-align: justify;
+      }
+
+      .blog-post img {
+        max-width: 100%;
+        border-radius: 1rem;
+        margin: 2rem 0;
+        box-shadow: 0 10px 30px rgba(124, 111, 212, 0.1);
+      }
+
+      .preview-actions {
+        padding: 1.5rem 2rem;
+        border-top: 1px solid rgba(124, 111, 212, 0.1);
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+      }
+
+      .preview-btn {
+        padding: 0.8rem 1.8rem;
+        border: none;
+        border-radius: 1.5rem;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+      }
+
+      .preview-btn-primary {
+        background: #7c6fd4;
+        color: white;
+        box-shadow: 0 8px 20px rgba(124, 111, 212, 0.3);
+      }
+
+      .preview-btn-primary:hover {
+        background: #6b5cc4;
+        transform: translateY(-2px);
+      }
+
+      .preview-btn-secondary {
+        background: rgba(124, 111, 212, 0.1);
+        color: #7c6fd4;
+        border: 1px solid rgba(124, 111, 212, 0.2);
+      }
+
+      .preview-btn-secondary:hover {
+        background: rgba(124, 111, 212, 0.15);
+        transform: translateY(-2px);
+      }
     </style>
   </head>
   <body>
@@ -442,6 +613,19 @@
         </div>
 
         <div class="toolbar-right">
+          <button class="tool-btn" id="previewBtn" title="Preview as blog post">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
           <button class="tool-btn" id="undoBtn">
             <svg
               width="20"
@@ -501,6 +685,50 @@
       <div class="sidebar-header">Pages</div>
       <div id="pagesList">
         <!-- Page thumbnails will be added here -->
+      </div>
+    </div>
+
+    <div class="preview-modal" id="previewModal">
+      <div class="preview-panel">
+        <div class="preview-header">
+          <h2 class="preview-title">Blog Post Preview</h2>
+          <button class="preview-close" id="previewCloseBtn">&times;</button>
+        </div>
+        <div class="preview-content">
+          <article class="blog-post" id="blogPostContent">
+            <h1>Handwritten Blog Post</h1>
+            <div class="blog-post-meta">
+              <span>📅 Today</span>
+              <span>✍️ Handwritten</span>
+              <span>📄 Page 1</span>
+            </div>
+            <p>
+              This is a preview of how your handwritten notes will appear as a
+              published blog post. Your canvas drawing is converted into an
+              elegant blog post format with smooth typography and a dreamy
+              pastel design theme.
+            </p>
+            <p>
+              The handwritten content maintains the personal touch while being
+              presented in a clean, professional blog format that's ready to
+              share with your readers.
+            </p>
+          </article>
+        </div>
+        <div class="preview-actions">
+          <button
+            class="preview-btn preview-btn-secondary"
+            id="previewExportBtn"
+          >
+            📥 Export as PDF
+          </button>
+          <button
+            class="preview-btn preview-btn-primary"
+            id="previewPublishBtn"
+          >
+            🚀 Publish
+          </button>
+        </div>
       </div>
     </div>
 
@@ -860,6 +1088,87 @@
       document
         .getElementById("sidebarOverlay")
         .addEventListener("click", toggleSidebar);
+
+      // Preview Modal Events
+      function openPreview() {
+        const previewModal = document.getElementById("previewModal");
+        const blogPostContent = document.getElementById("blogPostContent");
+
+        // Generate preview content from current page
+        const currentPage = pages[currentPageIndex];
+        if (currentPage) {
+          const pageNum = currentPageIndex + 1;
+          const totalPages = pages.length;
+          const today = new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+
+          blogPostContent.innerHTML = `
+            <h1>My Handwritten Notes</h1>
+            <div class="blog-post-meta">
+              <span>📅 ${today}</span>
+              <span>✍️ Handwritten</span>
+              <span>📄 Page ${pageNum} of ${totalPages}</span>
+            </div>
+            <p>
+              This is a preview of how your handwritten notes appear as a blog post. 
+              The canvas drawing captures the personal touch of handwriting while being 
+              presented in an elegant, professional blog format.
+            </p>
+            <p style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: rgba(124, 111, 212, 0.1); border-radius: 1rem; border-left: 4px solid #7c6fd4;">
+              <strong>Canvas Preview</strong><br>
+              <small style="opacity: 0.8;">Your handwritten content will be displayed here in the final blog post</small>
+            </p>
+            <p>
+              The dreamy pastels design philosophy creates a calming, creative atmosphere 
+              that reflects your personal writing style. Perfect for sharing your thoughts, 
+              ideas, and creative expressions with your audience.
+            </p>
+            <p>
+              Ready to publish? Click the "Publish" button to make this post live on your blog!
+            </p>
+          `;
+        }
+
+        previewModal.classList.add("visible");
+      }
+
+      function closePreview() {
+        const previewModal = document.getElementById("previewModal");
+        previewModal.classList.remove("visible");
+      }
+
+      document
+        .getElementById("previewBtn")
+        .addEventListener("click", openPreview);
+      document
+        .getElementById("previewCloseBtn")
+        .addEventListener("click", closePreview);
+      document
+        .getElementById("previewModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closePreview();
+          }
+        });
+
+      document
+        .getElementById("previewExportBtn")
+        .addEventListener("click", function () {
+          alert(
+            "PDF Export functionality would be implemented here. Your blog post is ready to export!"
+          );
+        });
+
+      document
+        .getElementById("previewPublishBtn")
+        .addEventListener("click", function () {
+          alert(
+            "🚀 Blog post published! Your handwritten notes are now live on your blog."
+          );
+        });
 
       initializeApp();
     </script>
