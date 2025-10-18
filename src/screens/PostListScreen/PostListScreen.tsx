@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Dimensions,
-  Animated,
-  Image,
-  Modal,
-} from "react-native";
-import { StatusBar } from "expo-status-bar";
-import BlogPost from "../../types/BlogPost";
+import { View, StyleSheet } from "react-native";
+import { useTheme } from "../../hooks/useTheme";
+import { usePostStore } from "../../store/postStore";
+import type { BlogPost } from "../../types/BlogPost";
+
+// Common Components
+import Toolbar from "../../components/common/Toolbar";
+import TwoColumnLayout from "../../components/common/layouts/TwoColumnLayout";
+
+// PostListScreen Specific Components
+import PostFilters from "./PostFilters";
+import PostCardList from "./PostCardList";
+import PostSearch from "./PostSearch";
+
+export type PostFilterType = "all" | "published" | "draft";
 
 // Mock data for demonstration with cover images
 const mockPosts: BlogPost[] = [
