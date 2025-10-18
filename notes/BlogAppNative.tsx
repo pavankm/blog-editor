@@ -18,9 +18,12 @@ import {
 } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
+import ScreenSelector from "../src/components/navigation/ScreenSelector";
+import { Screen } from "../src/components/navigation/types";
+import CanvasScreen from "../src/screens/EditorScreen/CanvasScreen";
 
 export default function BlogAppNative() {
-  const [screen, setScreen] = useState("canvas");
+  const [screen, setScreen] = useState<Screen>("canvas");
 
   const posts = [
     { title: "Stillness in Motion", date: "2025-10-15", status: "published" },
@@ -39,163 +42,10 @@ export default function BlogAppNative() {
       />
 
       {/* Screen Selector */}
-      <BlurView intensity={20} style={styles.screenSelector}>
-        <View style={styles.screenSelectorContent}>
-          <TouchableOpacity
-            onPress={() => setScreen("canvas")}
-            style={[
-              styles.screenButton,
-              screen === "canvas" && styles.activeScreenButton,
-            ]}
-          >
-            <Text
-              style={[
-                styles.screenButtonText,
-                screen === "canvas" && styles.activeScreenButtonText,
-              ]}
-            >
-              書く
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setScreen("preview")}
-            style={[
-              styles.screenButton,
-              screen === "preview" && styles.activeScreenButton,
-            ]}
-          >
-            <Text
-              style={[
-                styles.screenButtonText,
-                screen === "preview" && styles.activeScreenButtonText,
-              ]}
-            >
-              Preview
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setScreen("posts")}
-            style={[
-              styles.screenButton,
-              screen === "posts" && styles.activeScreenButton,
-            ]}
-          >
-            <Text
-              style={[
-                styles.screenButtonText,
-                screen === "posts" && styles.activeScreenButtonText,
-              ]}
-            >
-              Posts
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setScreen("settings")}
-            style={[
-              styles.screenButton,
-              screen === "settings" && styles.activeScreenButton,
-            ]}
-          >
-            <Text
-              style={[
-                styles.screenButtonText,
-                screen === "settings" && styles.activeScreenButtonText,
-              ]}
-            >
-              Settings
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </BlurView>
+      <ScreenSelector currentScreen={screen} onScreenSelect={setScreen} />
 
       {/* Canvas Screen */}
-      {screen === "canvas" && (
-        <View style={styles.screen}>
-          {/* Minimal Top Bar */}
-          <BlurView intensity={20} style={styles.topBar}>
-            <View style={styles.topBarContent}>
-              <View style={styles.topBarLeft}>
-                <View
-                  style={[styles.statusDot, { backgroundColor: "#fecaca" }]}
-                ></View>
-                <Text style={styles.screenTitle}>New Composition</Text>
-              </View>
-
-              <View style={styles.topBarRight}>
-                <TouchableOpacity
-                  style={[styles.button, styles.buttonSecondary]}
-                >
-                  <FileText size={16} color="#57534e" />
-                  <Text style={styles.buttonTextSecondary}>Preview</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.buttonPrimary]}>
-                  <Upload size={16} color="#fafaf9" />
-                  <Text style={styles.buttonTextPrimary}>Publish</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </BlurView>
-
-          {/* Canvas Area */}
-          <View style={styles.canvasArea}>
-            <View style={styles.canvas}>
-              <View style={styles.canvasPlaceholder}>
-                <View style={styles.canvasPlaceholderContent}>
-                  <LinearGradient
-                    colors={["#ffe4e6", "#fffbeb"]}
-                    style={styles.placeholderIconContainer}
-                  >
-                    <PenTool size={32} color="#57534e" strokeWidth={1.5} />
-                  </LinearGradient>
-                  <Text style={styles.placeholderText}>Begin your story</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* Bottom Minimalist Toolbar */}
-          <BlurView intensity={20} style={styles.bottomToolbar}>
-            <View style={styles.toolbarContent}>
-              <View style={styles.toolbarLeft}>
-                <TouchableOpacity style={styles.toolButton}>
-                  <Edit3 size={20} color="white" strokeWidth={1.5} />
-                </TouchableOpacity>
-                <View style={styles.divider}></View>
-                <View style={styles.brushOptions}>
-                  <Text style={styles.brushLabel}>Brush</Text>
-                  <View style={styles.brushSizes}>
-                    <TouchableOpacity
-                      style={[styles.brushSizeButton, styles.selectedBrush]}
-                    >
-                      <View
-                        style={[styles.brushDot, { width: 4, height: 4 }]}
-                      ></View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.brushSizeButton, styles.unselectedBrush]}
-                    >
-                      <View
-                        style={[styles.brushDot, { width: 6, height: 6 }]}
-                      ></View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.brushSizeButton, styles.unselectedBrush]}
-                    >
-                      <View
-                        style={[styles.brushDot, { width: 10, height: 10 }]}
-                      ></View>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-
-              <TouchableOpacity style={styles.clearButton}>
-                <Text style={styles.clearButtonText}>Clear</Text>
-              </TouchableOpacity>
-            </View>
-          </BlurView>
-        </View>
-      )}
+      {screen === "canvas" && <CanvasScreen />}
 
       {/* Preview Screen */}
       {screen === "preview" && (

@@ -5,11 +5,21 @@ import BottomToolbar from "../../components/toolbar/BottomToolbar";
 import { BrushSize } from "../../components/toolbar/types";
 import { styles, getDynamicStyles } from "./CanvasScreen.style";
 
+import Page from "../../components/canvas/Page";
+import PageControl from "../../components/canvas/PageControl";
+
 const CanvasScreen = () => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const dynamicStyles = getDynamicStyles(isDark);
   const [brushSize, setBrushSize] = useState<BrushSize>("medium");
+  const [pages, setPages] = useState([1]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const addPage = () => {
+    setPages([...pages, pages.length + 1]);
+    setCurrentPage(pages.length + 1);
+  };
 
   return (
     <View style={[styles.screen, dynamicStyles.screen]}>
@@ -42,20 +52,29 @@ const CanvasScreen = () => {
         </View>
       </View>
       <View style={styles.canvasArea}>
-        <View style={styles.placeholderContainer}>
-          <View
-            style={[
-              styles.placeholderIconContainer,
-              dynamicStyles.placeholderIconContainer,
-            ]}
-          >
-            <PenTool size={40} color={isDark ? "#9B8CE8" : "#7C6FD4"} />
+        <Page>
+          <View style={styles.placeholderContainer}>
+            <View
+              style={[
+                styles.placeholderIconContainer,
+                dynamicStyles.placeholderIconContainer,
+              ]}
+            >
+              <PenTool size={40} color={isDark ? "#9B8CE8" : "#7C6FD4"} />
+            </View>
+            <Text
+              style={[styles.placeholderText, dynamicStyles.placeholderText]}
+            >
+              Begin your story
+            </Text>
           </View>
-          <Text style={[styles.placeholderText, dynamicStyles.placeholderText]}>
-            Begin your story
-          </Text>
-        </View>
+        </Page>
       </View>
+      <PageControl
+        currentPage={currentPage}
+        totalPages={pages.length}
+        onAddPage={addPage}
+      />
       <BottomToolbar
         selectedBrushSize={brushSize}
         onBrushSizeChange={setBrushSize}

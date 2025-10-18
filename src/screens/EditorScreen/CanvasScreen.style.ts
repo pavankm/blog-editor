@@ -47,6 +47,7 @@ export const styles = StyleSheet.create({
   },
   canvasArea: {
     flex: 1,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -71,26 +72,28 @@ export const getDynamicStyles = (isDark: boolean) => {
   const colors = isDark ? darkColors : lightColors;
   return StyleSheet.create({
     screen: {
-      backgroundColor: colors.background,
+      backgroundColor: isDark ? "#1A1B2E" : "#FAF7FF",
     },
     topBar: {
       backgroundColor: colors.surface,
       borderBottomColor: colors.border,
     },
     statusDot: {
-      backgroundColor: colors.primary,
+      backgroundColor: colors.secondary,
     },
     screenTitle: {
       color: colors.text,
     },
     primaryButton: {
       backgroundColor: colors.primary,
+      shadowColor: colors.primary,
+      shadowOpacity: 0.3,
     },
     primaryButtonText: {
       color: "white",
     },
     secondaryButton: {
-      backgroundColor: colors.surface,
+      backgroundColor: "transparent",
       borderWidth: 1,
       borderColor: colors.border,
     },
@@ -98,7 +101,9 @@ export const getDynamicStyles = (isDark: boolean) => {
       color: colors.primary,
     },
     placeholderIconContainer: {
-      backgroundColor: "rgba(124, 111, 212, 0.1)",
+      backgroundColor: isDark
+        ? "rgba(155, 140, 232, 0.15)"
+        : "rgba(124, 111, 212, 0.1)",
     },
     placeholderText: {
       color: colors.textSecondary,
