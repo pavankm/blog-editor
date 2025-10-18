@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { PenTool, FileText, Upload, Check, Edit3, Github } from "lucide-react";
 import "./ex.css";
+import ScreenSelector from "../src/components/navigation/ScreenSelector";
 
 export default function BlogAppUI() {
   const [screen, setScreen] = useState("canvas");
@@ -17,34 +18,7 @@ export default function BlogAppUI() {
       <div className="top-border"></div>
 
       {/* Screen Selector */}
-      <div className="screen-selector">
-        <div className="screen-selector-content">
-          <button
-            onClick={() => setScreen("canvas")}
-            className={`screen-button ${screen === "canvas" ? "active" : ""}`}
-          >
-            書く
-          </button>
-          <button
-            onClick={() => setScreen("preview")}
-            className={`screen-button ${screen === "preview" ? "active" : ""}`}
-          >
-            Preview
-          </button>
-          <button
-            onClick={() => setScreen("posts")}
-            className={`screen-button ${screen === "posts" ? "active" : ""}`}
-          >
-            Posts
-          </button>
-          <button
-            onClick={() => setScreen("settings")}
-            className={`screen-button ${screen === "settings" ? "active" : ""}`}
-          >
-            Settings
-          </button>
-        </div>
-      </div>
+      <ScreenSelector currentScreen={screen} onScreenSelect={setScreen} />
 
       {/* Canvas Screen */}
       {screen === "canvas" && (
