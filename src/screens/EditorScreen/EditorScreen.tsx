@@ -1,15 +1,71 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import Svg, { Path, Circle } from "react-native-svg";
 
 // Common Components
 import Toolbar from "../../components/common/Toolbar";
 import Sidebar from "../../components/common/Sidebar";
+import NavigationMenu from "../../components/common/NavigationMenu";
 
 // EditorScreen Specific Components
-import DrawingCanvas from "../../components/canvas/DrawingCanvas";
+import DrawingCanvas, {
+  DrawingCanvasRef,
+} from "../../components/canvas/DrawingCanvas";
 import ToolPalette from "../../components/toolbar/ToolPalette";
 import LayerPanel from "../../components/LayerManager/LayerPanel";
 import PageIndicator from "../../components/canvas/PageIndicator";
+
+// Theme
+import { useTheme } from "../../hooks/useTheme";
+
+// SVG Icons for toolbar buttons (from HTML)
+const PreviewIcon = ({
+  color,
+  size = 20,
+}: {
+  color: string;
+  size?: number;
+}) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+  >
+    <Path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <Circle cx="12" cy="12" r="3" />
+  </Svg>
+);
+
+const UndoIcon = ({ color, size = 20 }: { color: string; size?: number }) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+  >
+    <Path d="M3 7v6h6" />
+    <Path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+  </Svg>
+);
+
+const RedoIcon = ({ color, size = 20 }: { color: string; size?: number }) => (
+  <Svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth="2"
+  >
+    <Path d="M21 7v6h-6" />
+    <Path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+  </Svg>
+);
 
 /**
  * EditorScreen
@@ -22,13 +78,17 @@ import PageIndicator from "../../components/canvas/PageIndicator";
  * - Export and publish functionality
  */
 export const EditorScreen: React.FC = () => {
+  const { theme } = useTheme();
+  const drawingCanvasRef = useRef<DrawingCanvasRef>(null);
+
   // Local state
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedTool, setSelectedTool] = useState("pen");
-  const [selectedColor, setSelectedColor] = useState("#000000");
-  const [strokeWidth, setStrokeWidth] = useState(2);
+  const [selectedColor, setSelectedColor] = useState("#000000"); // Match new palette default (black)
+  const [strokeWidth, setStrokeWidth] = useState(3); // Match HTML default value
 
   // Mock data for layers
   const [layers, setLayers] = useState([
@@ -42,10 +102,11 @@ export const EditorScreen: React.FC = () => {
   };
 
   /**
-   * Handle toolbar left button (menu/sidebar toggle)
+   * Handle navigation from NavigationMenu
    */
-  const handleToggleSidebar = () => {
-    setIsSidebarVisible(!isSidebarVisible);
+  const handleNavigate = (screen: string) => {
+    console.log(`Navigate to: ${screen}`);
+    // TODO: Implement actual navigation logic
   };
 
   /**
@@ -75,6 +136,16 @@ export const EditorScreen: React.FC = () => {
   };
 
   /**
+   * Handle page change from canvas
+   */
+  const handlePageChange = (pageIndex: number) => {
+    setCurrentPageIndex(pageIndex);
+    // Update total pages from canvas
+    const totalPagesFromCanvas = drawingCanvasRef.current?.getTotalPages() || 1;
+    setTotalPages(totalPagesFromCanvas);
+  };
+
+  /**
    * Handle page change from sidebar
    */
   const handleSelectPage = (pageIndex: number) => {
@@ -99,68 +170,89 @@ export const EditorScreen: React.FC = () => {
   };
 
   /**
+   * Handle undo action
+   */
+  const handleUndo = () => {
+    drawingCanvasRef.current?.undo();
+  };
+
+  /**
+   * Handle redo action
+   */
+  const handleRedo = () => {
+    drawingCanvasRef.current?.redo();
+  };
+
+  /**
    * Handle export
    */
   const handleExport = (format: "pdf" | "image" | "text") => {
     console.log(`Exporting as ${format}`);
   };
 
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.container}>
       {/* Top Toolbar */}
       <Toolbar
-        onLeftButtonPress={handleToggleSidebar}
-        leftButtonIcon=""
         centerContent={
-          <ToolPalette
-            selectedTool={selectedTool}
-            selectedColor={selectedColor}
-            strokeWidth={strokeWidth}
-            onToolChange={setSelectedTool}
-            onColorChange={setSelectedColor}
-            onStrokeWidthChange={setStrokeWidth}
-          />
+          <View style={styles.compactToolPalette}>
+            <ToolPalette
+              selectedTool={selectedTool}
+              selectedColor={selectedColor}
+              strokeWidth={strokeWidth}
+              onToolChange={setSelectedTool}
+              onColorChange={setSelectedColor}
+              onStrokeWidthChange={setStrokeWidth}
+              compact={true}
+            />
+          </View>
         }
-        rightButtons={[
-          {
-            icon: "",
-            onPress: handleOpenPreview,
-            label: "Preview",
-          },
-          {
-            icon: "",
-            onPress: () => {
-              console.log("Publish pressed");
-            },
-            label: "Publish",
-          },
-          {
-            icon: "",
-            onPress: () => {
-              console.log("Settings pressed");
-            },
-            label: "Settings",
-          },
-        ]}
+        rightButtons={[]}
       />
+
+      {/* Right Toolbar Buttons - positioned absolute */}
+      <View style={styles.rightToolbarContainer}>
+        <TouchableOpacity
+          style={[styles.toolButton, styles.previewButton]}
+          onPress={handleOpenPreview}
+        >
+          <PreviewIcon color={theme.colors.primary || "#7C6FD4"} size={20} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.toolButton} onPress={handleUndo}>
+          <UndoIcon color={theme.colors.primary || "#7C6FD4"} size={20} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.toolButton} onPress={handleRedo}>
+          <RedoIcon color={theme.colors.primary || "#7C6FD4"} size={20} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Navigation Menu - positioned absolute in top-right */}
+      <View style={styles.navigationMenuContainer}>
+        <NavigationMenu onNavigate={handleNavigate} />
+      </View>
 
       {/* Main Content Area */}
       <View style={styles.mainContent}>
         {/* Drawing Canvas */}
         <DrawingCanvas
+          ref={drawingCanvasRef}
           currentPost={currentPost}
           layers={layers}
           activeLayerId={layers[0]?.id}
           selectedTool={selectedTool}
           selectedColor={selectedColor}
           strokeWidth={strokeWidth}
-          onPageChange={setCurrentPageIndex}
+          onPageChange={handlePageChange}
         />
 
         {/* Page Indicator Badge */}
         <PageIndicator
           currentPage={currentPageIndex + 1}
-          totalPages={layers.length}
+          totalPages={totalPages}
         />
       </View>
 
@@ -185,32 +277,71 @@ export const EditorScreen: React.FC = () => {
       </Sidebar>
 
       {/* Preview Modal */}
+      {/* TODO: Import PreviewModal component */}
       {isPreviewVisible && (
-        <PreviewModal
-          post={currentPost}
-          layers={layers}
-          isVisible={isPreviewVisible}
-          onClose={handleClosePreview}
-          onExport={handleExport}
-        />
+        <View>
+          {/* PreviewModal component will be added when imported */}
+          {/* <PreviewModal
+            post={currentPost}
+            layers={layers}
+            isVisible={isPreviewVisible}
+            onClose={handleClosePreview}
+            onExport={handleExport}
+          /> */}
+        </View>
       )}
     </View>
   );
 };
 
-const createStyles = () =>
+const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#FAFAFA",
+      backgroundColor: theme.colors.background,
     },
     mainContent: {
       flex: 1,
       position: "relative",
       overflow: "hidden",
     },
+    navigationMenuContainer: {
+      position: "absolute",
+      top: theme.spacing.sm,
+      right: theme.spacing.sm,
+      zIndex: 10,
+    },
+    compactToolPalette: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: theme.spacing.xs,
+      maxHeight: theme.layout.toolbarHeight - theme.spacing.sm,
+      overflow: "hidden",
+    },
+    rightToolbarContainer: {
+      position: "absolute",
+      top: theme.spacing.sm,
+      right: 60, // Position to the left of navigation menu
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+      zIndex: 9,
+    },
+    toolButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20, // Circular like in HTML
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+      ...theme.shadow.sm,
+    },
+    previewButton: {
+      // Special styling for preview button if needed
+    },
   });
-
-const styles = createStyles();
 
 export default EditorScreen;

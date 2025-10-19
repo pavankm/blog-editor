@@ -71,12 +71,21 @@ interface ThemeShadow {
   };
 }
 
+interface ThemeLayout {
+  toolbarHeight: number;
+  compactSpacing: number;
+  minTouchTarget: number;
+  sliderTrackHeight: number;
+  sliderThumbSize: number;
+}
+
 interface Theme {
   colors: ThemeColors;
   typography: ThemeTypography;
   spacing: ThemeSpacing;
   radius: ThemeRadius;
   shadow: ThemeShadow;
+  layout: ThemeLayout;
   isDark: boolean;
 }
 
@@ -147,6 +156,13 @@ const lightTheme: Theme = {
       shadowRadius: 4,
       elevation: 3,
     },
+  },
+  layout: {
+    toolbarHeight: 56,
+    compactSpacing: 4,
+    minTouchTarget: 32,
+    sliderTrackHeight: 4,
+    sliderThumbSize: 16,
   },
   isDark: false,
 };
@@ -219,6 +235,13 @@ const darkTheme: Theme = {
       elevation: 3,
     },
   },
+  layout: {
+    toolbarHeight: 56,
+    compactSpacing: 4,
+    minTouchTarget: 32,
+    sliderTrackHeight: 4,
+    sliderThumbSize: 16,
+  },
   isDark: true,
 };
 
@@ -261,4 +284,5 @@ export type {
   ThemeSpacing,
   ThemeRadius,
   ThemeShadow,
+  ThemeLayout,
 };

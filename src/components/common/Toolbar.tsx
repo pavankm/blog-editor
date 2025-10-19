@@ -24,15 +24,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      {/* Left Button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={onLeftButtonPress}
-        disabled={!onLeftButtonPress}
-      >
-        <Text style={styles.buttonText}>{leftButtonIcon || "☰"}</Text>
-      </TouchableOpacity>
-
       {/* Center Content or Title */}
       <View style={styles.centerContent}>
         {centerContent ? (

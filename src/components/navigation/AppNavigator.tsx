@@ -29,7 +29,7 @@ export const AppNavigator: React.FC = () => {
     <NavigationContainer>
       {/* For now, we'll directly render PostListScreen as the main screen */}
       {/* Navigation is handled through the NavigationMenu dropdown in the header */}
-      <PostListScreen />
+      <EditorScreen />
     </NavigationContainer>
   );
 };
