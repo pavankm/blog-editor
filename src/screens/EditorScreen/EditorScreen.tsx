@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "../../hooks/useTheme";
-import { useEditorStore } from "../../store/editorStore";
 
 // Common Components
 import Toolbar from "../../components/common/Toolbar";
@@ -12,7 +10,6 @@ import DrawingCanvas from "../../components/canvas/DrawingCanvas";
 import ToolPalette from "../../components/toolbar/ToolPalette";
 import LayerPanel from "../../components/LayerManager/LayerPanel";
 import PageIndicator from "../../components/canvas/PageIndicator";
-import PreviewModal from "./PreviewModal";
 
 /**
  * EditorScreen
@@ -25,29 +22,24 @@ import PreviewModal from "./PreviewModal";
  * - Export and publish functionality
  */
 export const EditorScreen: React.FC = () => {
-  const { theme } = useTheme();
-  const styles = createStyles(theme);
-
-  // Zustand store for editor state
-  const {
-    currentPost,
-    layers,
-    activeLayerId,
-    selectedTool,
-    selectedColor,
-    strokeWidth,
-    addLayer,
-    deleteLayer,
-    toggleLayerVisibility,
-    setActiveTool,
-    updateStrokeWidth,
-    updateColor,
-  } = useEditorStore();
-
   // Local state
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [selectedTool, setSelectedTool] = useState("pen");
+  const [selectedColor, setSelectedColor] = useState("#000000");
+  const [strokeWidth, setStrokeWidth] = useState(2);
+
+  // Mock data for layers
+  const [layers, setLayers] = useState([
+    { id: "layer-1", name: "Layer 1", visible: true },
+    { id: "layer-2", name: "Layer 2", visible: true },
+  ]);
+
+  const currentPost = {
+    title: "Sample Post",
+    id: "1",
+  };
 
   /**
    * Handle toolbar left button (menu/sidebar toggle)
@@ -74,7 +66,12 @@ export const EditorScreen: React.FC = () => {
    * Handle adding a new page/layer
    */
   const handleAddPage = () => {
-    addLayer();
+    const newLayer = {
+      id: "layer-" + (layers.length + 1),
+      name: "Layer " + (layers.length + 1),
+      visible: true,
+    };
+    setLayers([...layers, newLayer]);
   };
 
   /**
@@ -85,39 +82,62 @@ export const EditorScreen: React.FC = () => {
     setIsSidebarVisible(false);
   };
 
+  /**
+   * Handle delete layer
+   */
+  const handleDeleteLayer = (layerId: string) => {
+    setLayers(layers.filter((l) => l.id !== layerId));
+  };
+
+  /**
+   * Handle toggle layer visibility
+   */
+  const handleToggleLayerVisibility = (layerId: string) => {
+    setLayers(
+      layers.map((l) => (l.id === layerId ? { ...l, visible: !l.visible } : l))
+    );
+  };
+
+  /**
+   * Handle export
+   */
+  const handleExport = (format: "pdf" | "image" | "text") => {
+    console.log(`Exporting as ${format}`);
+  };
+
   return (
     <View style={styles.container}>
       {/* Top Toolbar */}
       <Toolbar
         onLeftButtonPress={handleToggleSidebar}
-        leftButtonIcon="menu"
+        leftButtonIcon=""
         centerContent={
           <ToolPalette
             selectedTool={selectedTool}
             selectedColor={selectedColor}
             strokeWidth={strokeWidth}
-            onToolChange={setActiveTool}
-            onColorChange={updateColor}
-            onStrokeWidthChange={updateStrokeWidth}
+            onToolChange={setSelectedTool}
+            onColorChange={setSelectedColor}
+            onStrokeWidthChange={setStrokeWidth}
           />
         }
         rightButtons={[
           {
-            icon: "eye",
+            icon: "",
             onPress: handleOpenPreview,
             label: "Preview",
           },
           {
-            icon: "upload",
+            icon: "",
             onPress: () => {
-              // TODO: Handle publish
+              console.log("Publish pressed");
             },
             label: "Publish",
           },
           {
-            icon: "settings",
+            icon: "",
             onPress: () => {
-              // TODO: Navigate to settings
+              console.log("Settings pressed");
             },
             label: "Settings",
           },
@@ -130,7 +150,7 @@ export const EditorScreen: React.FC = () => {
         <DrawingCanvas
           currentPost={currentPost}
           layers={layers}
-          activeLayerId={activeLayerId}
+          activeLayerId={layers[0]?.id}
           selectedTool={selectedTool}
           selectedColor={selectedColor}
           strokeWidth={strokeWidth}
@@ -152,12 +172,12 @@ export const EditorScreen: React.FC = () => {
       >
         <LayerPanel
           layers={layers}
-          activeLayerId={activeLayerId}
-          onSelectLayer={(layerId) => {
-            // TODO: Update active layer in store
+          activeLayerId={layers[0]?.id}
+          onSelectLayer={(layerId: string) => {
+            console.log("Selected layer:", layerId);
           }}
-          onToggleLayerVisibility={toggleLayerVisibility}
-          onDeleteLayer={deleteLayer}
+          onToggleLayerVisibility={handleToggleLayerVisibility}
+          onDeleteLayer={handleDeleteLayer}
           onAddLayer={handleAddPage}
           currentPageIndex={currentPageIndex}
           onSelectPage={handleSelectPage}
@@ -171,21 +191,18 @@ export const EditorScreen: React.FC = () => {
           layers={layers}
           isVisible={isPreviewVisible}
           onClose={handleClosePreview}
-          onExport={(format: "pdf" | "image" | "text") => {
-            // TODO: Handle export
-            console.log(`Export as ${format}`);
-          }}
+          onExport={handleExport}
         />
       )}
     </View>
   );
 };
 
-const createStyles = (theme: any) =>
+const createStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: "#FAFAFA",
     },
     mainContent: {
       flex: 1,
@@ -193,5 +210,7 @@ const createStyles = (theme: any) =>
       overflow: "hidden",
     },
   });
+
+const styles = createStyles();
 
 export default EditorScreen;
