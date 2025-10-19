@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Svg, { Path, Circle } from "react-native-svg";
 
 // Common Components
@@ -79,6 +80,7 @@ const RedoIcon = ({ color, size = 20 }: { color: string; size?: number }) => (
  */
 export const EditorScreen: React.FC = () => {
   const { theme } = useTheme();
+  const navigation = useNavigation();
   const drawingCanvasRef = useRef<DrawingCanvasRef>(null);
 
   // Local state
@@ -106,7 +108,30 @@ export const EditorScreen: React.FC = () => {
    */
   const handleNavigate = (screen: string) => {
     console.log(`Navigate to: ${screen}`);
-    // TODO: Implement actual navigation logic
+
+    try {
+      switch (screen) {
+        case "posts":
+          navigation.navigate("PostList" as never);
+          break;
+        case "editor":
+          // Already on editor screen
+          break;
+        case "settings":
+          navigation.navigate("Settings" as never);
+          break;
+        case "publish":
+          // For now, just show an alert
+          alert("Publish functionality coming soon!");
+          break;
+        default:
+          console.warn(`Unknown navigation target: ${screen}`);
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback: show alert
+      alert(`Navigation to ${screen} not available yet`);
+    }
   };
 
   /**
@@ -303,7 +328,6 @@ const createStyles = (theme: any) =>
     mainContent: {
       flex: 1,
       position: "relative",
-      overflow: "hidden",
     },
     navigationMenuContainer: {
       position: "absolute",

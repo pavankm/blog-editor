@@ -8,6 +8,7 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../../hooks/useTheme";
 import { usePostStore } from "../../store/PostContext";
 import type BlogPost from "../../types/BlogPost";
@@ -125,6 +126,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPress }) => {
 
 const PostListScreen: React.FC = () => {
   const { theme } = useTheme();
+  const navigation = useNavigation();
   const styles = createStyles(theme);
 
   const [activeStatus, setActiveStatus] = useState<PostFilterType>("all");
@@ -133,17 +135,38 @@ const PostListScreen: React.FC = () => {
 
   const handlePostPress = (post: BlogPost) => {
     console.log("Opening post:", post.title);
-    // TODO: Navigate to editor screen
+    navigation.navigate("Editor" as never);
   };
 
   const handleNewPost = () => {
     console.log("Creating new post");
-    // TODO: Navigate to editor with new post
+    navigation.navigate("Editor" as never);
   };
 
   const handleNavigate = (screen: string) => {
     console.log("Navigating to:", screen);
-    // TODO: Implement navigation logic
+
+    try {
+      switch (screen) {
+        case "posts":
+          // Already on posts screen
+          break;
+        case "editor":
+          navigation.navigate("Editor" as never);
+          break;
+        case "settings":
+          navigation.navigate("Settings" as never);
+          break;
+        case "publish":
+          alert("Publish functionality coming soon!");
+          break;
+        default:
+          console.warn(`Unknown navigation target: ${screen}`);
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
+      alert(`Navigation to ${screen} not available yet`);
+    }
   };
 
   // Filter posts

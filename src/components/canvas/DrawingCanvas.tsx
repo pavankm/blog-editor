@@ -16,6 +16,7 @@ import {
   PanResponder,
   GestureResponderEvent,
   PanResponderGestureState,
+  Platform,
 } from "react-native";
 import Svg, { Path, Line } from "react-native-svg";
 import { useTheme } from "../../hooks/useTheme";
@@ -294,8 +295,64 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
 
     const createPanResponder = (pageIndex: number) => {
       return PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
+        onStartShouldSetPanResponder: (evt, gestureState) => {
+          // On web, only capture if we have a drawing tool selected
+          if (Platform.OS === "web") {
+            return !!(
+              selectedTool &&
+              selectedTool !== "" &&
+              selectedTool !== "none"
+            );
+          }
+
+          // On native platforms, be more permissive
+          return true;
+        },
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+          // If no drawing tool is selected, never capture
+          if (!selectedTool || selectedTool === "" || selectedTool === "none") {
+            return false;
+          }
+
+          const { dx, dy, vx, vy } = gestureState;
+          const absDx = Math.abs(dx);
+          const absDy = Math.abs(dy);
+
+          // On web, be very conservative - only capture clear drawing gestures
+          if (Platform.OS === "web") {
+            // If it's primarily vertical movement, let scroll handle it
+            if (absDy > absDx && absDy > 5) {
+              return false;
+            }
+
+            // If very little movement, don't capture
+            if (absDx < 3 && absDy < 3) {
+              return false;
+            }
+
+            // Only capture if movement suggests drawing (horizontal or diagonal)
+            return absDx >= absDy || (absDx > 5 && absDy > 5);
+          } else {
+            // Native platform logic (keep existing)
+            const absVx = Math.abs(vx);
+            const absVy = Math.abs(vy);
+
+            if (absDy > absDx * 1.5 && absVy > 0.5) {
+              return false;
+            }
+
+            if (absVy > 1.0 && absVy > absVx * 2) {
+              return false;
+            }
+
+            if (absDx < 5 && absDy < 5) {
+              return false;
+            }
+          }
+
+          // Otherwise, if we have a drawing tool, capture for drawing
+          return true;
+        },
         onPanResponderGrant: (event) => handleDrawingStart(event, pageIndex),
         onPanResponderMove: (event) => handleDrawingMove(event, pageIndex),
         onPanResponderRelease: () => handleDrawingEnd(pageIndex),
@@ -349,7 +406,14 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={true}
-          bounces={true}
+          bounces={Platform.OS !== "web"} // Disable bounces on web
+          scrollEventThrottle={16}
+          directionalLockEnabled={Platform.OS !== "web"} // Disable on web
+          alwaysBounceVertical={Platform.OS !== "web"}
+          decelerationRate="normal"
+          maximumZoomScale={1}
+          minimumZoomScale={1}
+          removeClippedSubviews={false}
         >
           {pages.map((page, pageIndex) => (
             <View key={page.id} style={styles.pageContainer}>
@@ -368,7 +432,12 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
                     shadowColor: theme.colors.primary,
                   },
                 ]}
-                {...createPanResponder(pageIndex).panHandlers}
+                // Only add pan handlers if we have a valid drawing tool
+                {...(selectedTool &&
+                selectedTool !== "" &&
+                selectedTool !== "none"
+                  ? createPanResponder(pageIndex).panHandlers
+                  : {})}
               >
                 <Svg
                   width={PAGE_WIDTH}

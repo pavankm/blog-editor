@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../../hooks/useTheme";
 import { useSettingsStore } from "../../store/SettingsContext";
 
@@ -32,6 +33,7 @@ export type SettingsSectionType =
  */
 export const SettingsScreen: React.FC = () => {
   const { theme } = useTheme();
+  const navigation = useNavigation();
   const styles = createStyles(theme);
 
   // Zustand store for settings
@@ -108,12 +110,41 @@ export const SettingsScreen: React.FC = () => {
     });
   };
 
+  /**
+   * Handle navigation
+   */
+  const handleNavigate = (screen: string) => {
+    console.log("Navigating to:", screen);
+
+    try {
+      switch (screen) {
+        case "posts":
+          navigation.navigate("PostList" as never);
+          break;
+        case "editor":
+          navigation.navigate("Editor" as never);
+          break;
+        case "settings":
+          // Already on settings screen
+          break;
+        case "publish":
+          alert("Publish functionality coming soon!");
+          break;
+        default:
+          console.warn(`Unknown navigation target: ${screen}`);
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
+      alert(`Navigation to ${screen} not available yet`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Top Toolbar */}
       <Toolbar
         onLeftButtonPress={() => {
-          // TODO: Navigate back
+          navigation.navigate("PostList" as never);
         }}
         leftButtonIcon="arrow-left"
         title="Settings"
