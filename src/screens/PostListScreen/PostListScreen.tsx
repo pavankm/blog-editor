@@ -15,6 +15,7 @@ import type BlogPost from "../../types/BlogPost";
 // Common Components
 import TwoColumnLayout from "../../components/common/layouts/TwoColumnLayout";
 import PostSearch from "./PostSearch";
+import NavigationMenu from "../../components/common/NavigationMenu";
 
 export type PostFilterType = "all" | "published" | "draft";
 
@@ -138,6 +139,11 @@ const PostListScreen: React.FC = () => {
   const handleNewPost = () => {
     console.log("Creating new post");
     // TODO: Navigate to editor with new post
+  };
+
+  const handleNavigate = (screen: string) => {
+    console.log("Navigating to:", screen);
+    // TODO: Implement navigation logic
   };
 
   // Filter posts
@@ -382,10 +388,8 @@ const PostListScreen: React.FC = () => {
             <Text style={styles.newPostButtonText}>+ New Post</Text>
           </TouchableOpacity>
 
-          {/* More Options */}
-          <TouchableOpacity style={styles.moreButton}>
-            <Text style={styles.moreIcon}>⋮</Text>
-          </TouchableOpacity>
+          {/* Navigation Menu */}
+          <NavigationMenu onNavigate={handleNavigate} />
         </View>
       </View>
 
@@ -491,15 +495,6 @@ const createStyles = (theme: any) =>
     searchContainer: {
       flex: 1,
       marginHorizontal: theme.spacing.md,
-    },
-    moreButton: {
-      padding: theme.spacing.sm,
-      marginLeft: theme.spacing.md,
-    },
-    moreIcon: {
-      fontSize: 18,
-      color: theme.colors.text,
-      transform: [{ rotate: "90deg" }],
     },
     headerRow: {
       flexDirection: "row",
