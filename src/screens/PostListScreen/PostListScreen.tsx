@@ -1,8 +1,19 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Animated,
+  TouchableOpacity,
+  Text,
+  Image,
+  FlatList,
+  Modal,
+  StatusBar,
+} from "react-native";
 import { useTheme } from "../../hooks/useTheme";
-import { usePostStore } from "../../store/postStore";
-import type { BlogPost } from "../../types/BlogPost";
+import { usePostStore } from "../../store/PostContext";
+import type BlogPost from "../../types/BlogPost";
 
 // Common Components
 import Toolbar from "../../components/common/Toolbar";
@@ -244,7 +255,7 @@ export default function PostListScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" backgroundColor="#FAF7FF" />
 
       {/* Header */}
       <View style={styles.header}>

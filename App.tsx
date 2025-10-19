@@ -1,5 +1,7 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SettingsProvider } from "./src/store/SettingsContext";
+import { PostProvider } from "./src/store/PostContext";
 import AppNavigator from "./src/components/navigation/AppNavigator";
 
 /**
@@ -7,16 +9,23 @@ import AppNavigator from "./src/components/navigation/AppNavigator";
  *
  * Root component that wraps the entire application with:
  * - SafeAreaProvider (for safe area context)
+ * - SettingsProvider (for settings state management)
+ * - PostProvider (for post state management)
  * - AppNavigator (for React Navigation screen management)
  *
  * Dependencies:
  * - React Navigation with bottom tabs
  * - SafeAreaContext
+ * - Context API for state management
  */
 export default function App() {
   return (
     <SafeAreaProvider>
-      <AppNavigator />
+      <SettingsProvider>
+        <PostProvider>
+          <AppNavigator />
+        </PostProvider>
+      </SettingsProvider>
     </SafeAreaProvider>
   );
 }

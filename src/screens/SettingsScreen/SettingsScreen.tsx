@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useTheme } from "../../hooks/useTheme";
-import { useSettingsStore } from "../../store/settingsStore";
+import { useSettingsStore } from "../../store/SettingsContext";
 
 // Common Components
 import Toolbar from "../../components/common/Toolbar";
@@ -97,16 +97,14 @@ export const SettingsScreen: React.FC = () => {
     // TODO: Test connection to GitHub API
     console.log("Testing GitHub connection");
   };
-
   /**
    * Disconnect GitHub
    */
   const handleDisconnectGithub = () => {
     setGithubToken({
       token: "",
-      owner: "",
-      repo: "",
-      branch: "main",
+      username: "",
+      repository: "",
     });
   };
 
