@@ -26,9 +26,6 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
         {leftColumn}
       </View>
 
-      {/* Divider */}
-      <View style={styles.divider} />
-
       {/* Right Column */}
       <View style={[styles.column, styles.rightColumn]}>{rightColumn}</View>
     </View>
@@ -41,14 +38,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   column: {
-    flex: 0,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   rightColumn: {
     flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
   },
   divider: {
     width: 1,

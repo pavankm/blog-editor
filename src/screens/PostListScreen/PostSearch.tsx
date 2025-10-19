@@ -58,30 +58,29 @@ const PostSearch: React.FC<PostSearchProps> = ({
 const createStyles = (theme: any) =>
   StyleSheet.create({
     container: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
+      // Remove padding since it's handled by parent container
     },
     searchBox: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: theme.colors.surface,
-      borderRadius: 8,
+      backgroundColor: "#f8f9fa",
+      borderRadius: theme.radius.pill,
       borderWidth: 1,
       borderColor: theme.colors.border || "#e0e0e0",
-      paddingHorizontal: 12,
-      height: 40,
+      paddingHorizontal: theme.spacing.lg,
+      height: 44,
     },
     searchIcon: {
       fontSize: 16,
-      marginRight: 8,
+      marginRight: theme.spacing.sm,
     },
     input: {
       flex: 1,
-      fontSize: 14,
+      ...theme.typography.bodyLarge,
       color: theme.colors.text,
     },
     clearButton: {
-      padding: 4,
+      padding: theme.spacing.xs,
     },
     clearIcon: {
       fontSize: 16,

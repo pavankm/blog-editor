@@ -2,725 +2,630 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  Dimensions,
-  Animated,
+  ScrollView,
   TouchableOpacity,
   Text,
-  Image,
   FlatList,
-  Modal,
-  StatusBar,
+  SafeAreaView,
 } from "react-native";
 import { useTheme } from "../../hooks/useTheme";
 import { usePostStore } from "../../store/PostContext";
 import type BlogPost from "../../types/BlogPost";
 
 // Common Components
-import Toolbar from "../../components/common/Toolbar";
 import TwoColumnLayout from "../../components/common/layouts/TwoColumnLayout";
-
-// PostListScreen Specific Components
-import PostFilters from "./PostFilters";
-import PostCardList from "./PostCardList";
 import PostSearch from "./PostSearch";
 
 export type PostFilterType = "all" | "published" | "draft";
 
-// Mock data for demonstration with cover images
+// Mock posts with tags
 const mockPosts: BlogPost[] = [
   {
     id: "1",
-    title: "Getting Started with Blog Editor",
+    title: "Building a Modern Note-Taking App",
     content:
-      "This is my first blog post using the new iPad editor. Exploring all the amazing features and capabilities...",
+      "A comprehensive guide to building a feature-rich note-taking application with pen support and infinite scrolling.",
     published: true,
-    createdAt: new Date("2025-08-20"),
-    updatedAt: new Date("2025-08-22"),
-    coverImage:
-      "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=300&fit=crop",
+    createdAt: new Date("2025-03-14"),
+    updatedAt: new Date("2025-03-15"),
+    tags: ["Technology", "Tutorial", "JavaScript"],
   },
   {
     id: "2",
-    title: "Drawing with Apple Pencil",
+    title: "Design Principles for iPad Apps",
     content:
-      "Exploring the layered drawing capabilities and how they integrate seamlessly with text content...",
+      "Exploring the key design principles that make iPad applications feel native and intuitive to users.",
     published: false,
-    createdAt: new Date("2025-08-21"),
-    updatedAt: new Date("2025-08-21"),
-    coverImage:
-      "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=300&fit=crop",
+    createdAt: new Date("2025-03-09"),
+    updatedAt: new Date("2025-03-13"),
+    tags: ["Design", "iOS", "UX"],
   },
   {
     id: "3",
-    title: "Publishing Workflow",
+    title: "Introduction to Hugo Static Site Generator",
     content:
-      "How to publish directly to your website with one-click publishing and seamless integration...",
+      "Learn how to set up and configure Hugo for your blog, including themes, content management, and deployment.",
     published: true,
-    createdAt: new Date("2025-08-22"),
-    updatedAt: new Date("2025-08-22"),
-    coverImage:
-      "https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=400&h=300&fit=crop",
-  },
-  {
-    id: "4",
-    title: "Creative Typography",
-    content:
-      "Exploring beautiful typography combinations and how they enhance your blog content...",
-    published: false,
-    createdAt: new Date("2025-08-19"),
-    updatedAt: new Date("2025-08-23"),
-    coverImage:
-      "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&h=300&fit=crop",
-  },
-  {
-    id: "5",
-    title: "Visual Storytelling",
-    content:
-      "The power of combining visuals with text to create compelling narratives...",
-    published: true,
-    createdAt: new Date("2025-08-18"),
-    updatedAt: new Date("2025-08-20"),
-    coverImage:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
-  },
-  {
-    id: "6",
-    title: "iPad Pro Features",
-    content:
-      "Making the most of iPad Pro capabilities for professional content creation...",
-    published: false,
-    createdAt: new Date("2025-08-17"),
-    updatedAt: new Date("2025-08-19"),
-    coverImage:
-      "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=400&h=300&fit=crop",
+    createdAt: new Date("2025-03-07"),
+    updatedAt: new Date("2025-03-07"),
+    tags: ["Hugo", "Web Development", "Tutorial"],
   },
 ];
 
-type SortOption = "title" | "date" | "published";
-
-const { width } = Dimensions.get("window");
-const isTablet = width >= 768;
-const numColumns = isTablet ? 3 : 2;
-
 interface PostCardProps {
-  post: BlogPost;
+  post: BlogPost & { tags?: string[] };
   onPress: () => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onPress }) => {
-  const scaleAnim = new Animated.Value(1);
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
 
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.96,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   return (
-    <Animated.View
-      style={[styles.postCardContainer, { transform: [{ scale: scaleAnim }] }]}
-    >
-      <TouchableOpacity
-        style={styles.postCard}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        activeOpacity={1}
-      >
-        {/* Cover Image */}
-        <View style={styles.imageContainer}>
-          {post.coverImage ? (
-            <Image
-              source={{ uri: post.coverImage }}
-              style={styles.coverImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.placeholderImage}>
-              <Text style={styles.placeholderText}>📝</Text>
-            </View>
-          )}
-
-          {/* Status Badge Overlay */}
-          <View style={styles.statusOverlay}>
-            <View
-              style={[
-                styles.statusBadge,
-                post.published ? styles.published : styles.draft,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.statusText,
-                  post.published ? styles.publishedText : styles.draftText,
-                ]}
-              >
-                {post.published ? "✨" : "📝"}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Card Content */}
-        <View style={styles.cardContent}>
-          <Text style={styles.postTitle} numberOfLines={2}>
-            {post.title}
+    <TouchableOpacity style={styles.postCard} onPress={onPress}>
+      {/* Post Header with Title and Status */}
+      <View style={styles.postHeader}>
+        <Text style={styles.postTitle}>{post.title}</Text>
+        <View
+          style={[
+            styles.statusBadge,
+            post.published ? styles.statusPublished : styles.statusDraft,
+          ]}
+        >
+          <Text
+            style={[
+              styles.statusBadgeText,
+              post.published
+                ? styles.statusPublishedText
+                : styles.statusDraftText,
+            ]}
+          >
+            {post.published ? "● Published" : "● Draft"}
           </Text>
-          <Text style={styles.postContent} numberOfLines={3}>
-            {post.content}
-          </Text>
-          <View style={styles.postFooter}>
-            <Text style={styles.postDate}>
-              {post.updatedAt.toLocaleDateString()}
-            </Text>
-            <View style={styles.actionDots}>
-              <View style={[styles.dot, { backgroundColor: "#7C6FD4" }]} />
-              <View style={[styles.dot, { backgroundColor: "#FF9B9B" }]} />
-              <View style={[styles.dot, { backgroundColor: "#98D8C8" }]} />
-            </View>
-          </View>
         </View>
-      </TouchableOpacity>
-    </Animated.View>
+      </View>
+
+      {/* Post Excerpt */}
+      <Text style={styles.postExcerpt} numberOfLines={2}>
+        {post.content}
+      </Text>
+
+      {/* Date Info */}
+      <View style={styles.dateInfo}>
+        <Text style={styles.dateIcon}>📅</Text>
+        <Text style={styles.dateText}>{formatDate(post.createdAt)}</Text>
+        <Text style={styles.dateSeparator}>•</Text>
+        <Text style={styles.dateText}>
+          Modified {formatDate(post.updatedAt)}
+        </Text>
+      </View>
+
+      {/* Tags */}
+      {post.tags && post.tags.length > 0 && (
+        <View style={styles.tagsContainer}>
+          {post.tags.map((tag) => (
+            <View key={tag} style={styles.tag}>
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </TouchableOpacity>
   );
 };
 
-export default function PostListScreen() {
-  const [activeFilter, setActiveFilter] = useState<
-    "all" | "drafts" | "published"
-  >("all");
-  const [sortBy, setSortBy] = useState<SortOption>("date");
-  const [showSortModal, setShowSortModal] = useState(false);
+const PostListScreen: React.FC = () => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
+
+  const [activeStatus, setActiveStatus] = useState<PostFilterType>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handlePostPress = (post: BlogPost) => {
     console.log("Opening post:", post.title);
     // TODO: Navigate to editor screen
   };
 
-  const handleCreateNew = () => {
+  const handleNewPost = () => {
     console.log("Creating new post");
-    // TODO: Navigate to editor screen with new post
+    // TODO: Navigate to editor with new post
   };
 
-  const sortPosts = (posts: BlogPost[]) => {
-    return [...posts].sort((a, b) => {
-      switch (sortBy) {
-        case "title":
-          return a.title.localeCompare(b.title);
-        case "date":
-          return b.updatedAt.getTime() - a.updatedAt.getTime();
-        case "published":
-          if (a.published === b.published) {
-            return b.updatedAt.getTime() - a.updatedAt.getTime();
-          }
-          return a.published ? -1 : 1;
-        default:
-          return 0;
-      }
-    });
-  };
+  // Filter posts
+  const filteredPosts = mockPosts.filter((post) => {
+    // Status filter
+    if (activeStatus === "published" && !post.published) return false;
+    if (activeStatus === "draft" && post.published) return false;
 
-  const filteredPosts = sortPosts(
-    mockPosts.filter((post) => {
-      if (activeFilter === "drafts") return !post.published;
-      if (activeFilter === "published") return post.published;
-      return true;
-    })
-  );
-
-  const renderPost = ({ item }: { item: BlogPost }) => (
-    <PostCard post={item} onPress={() => handlePostPress(item)} />
-  );
-
-  const getSortLabel = (option: SortOption) => {
-    switch (option) {
-      case "title":
-        return "Title";
-      case "date":
-        return "Date";
-      case "published":
-        return "Status";
-      default:
-        return "Date";
+    // Search filter
+    if (
+      searchQuery &&
+      !post.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
+      return false;
     }
+
+    return true;
+  });
+
+  const postCounts = {
+    all: mockPosts.length,
+    published: mockPosts.filter((p) => p.published).length,
+    draft: mockPosts.filter((p) => !p.published).length,
   };
 
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#FAF7FF" />
+  const categories = [
+    { name: "Technology", count: 5 },
+    { name: "Design", count: 4 },
+    { name: "Tutorial", count: 3 },
+  ];
 
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerActions}>
-          {/* Sort Dropdown */}
-          <TouchableOpacity
-            style={styles.sortButton}
-            onPress={() => setShowSortModal(true)}
-          >
-            <Text style={styles.sortButtonText}>
-              Sort: {getSortLabel(sortBy)}
+  // Left Sidebar
+  const leftColumn = (
+    <ScrollView style={styles.sidebar} showsVerticalScrollIndicator={false}>
+      {/* Status Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTitle}>STATUS</Text>
+
+        <TouchableOpacity
+          style={[
+            styles.filterItem,
+            activeStatus === "all" && styles.filterItemActive,
+          ]}
+          onPress={() => setActiveStatus("all")}
+        >
+          <View style={styles.filterItemContent}>
+            <Text
+              style={[
+                styles.filterItemText,
+                activeStatus === "all" && styles.filterItemTextActive,
+              ]}
+            >
+              All Posts
             </Text>
-            <Text style={styles.sortArrow}>▼</Text>
+            <View
+              style={[
+                styles.filterItemBadge,
+                activeStatus === "all" && styles.filterItemBadgeActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.filterItemBadgeText,
+                  activeStatus === "all" && styles.filterItemBadgeTextActive,
+                ]}
+              >
+                {postCounts.all}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filterItem,
+            activeStatus === "published" && styles.filterItemActive,
+          ]}
+          onPress={() => setActiveStatus("published")}
+        >
+          <View style={styles.filterItemContent}>
+            <Text
+              style={[
+                styles.filterItemText,
+                activeStatus === "published" && styles.filterItemTextActive,
+              ]}
+            >
+              Published
+            </Text>
+            <View
+              style={[
+                styles.filterItemBadge,
+                activeStatus === "published" && styles.filterItemBadgeActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.filterItemBadgeText,
+                  activeStatus === "published" &&
+                    styles.filterItemBadgeTextActive,
+                ]}
+              >
+                {postCounts.published}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filterItem,
+            activeStatus === "draft" && styles.filterItemActive,
+          ]}
+          onPress={() => setActiveStatus("draft")}
+        >
+          <View style={styles.filterItemContent}>
+            <Text
+              style={[
+                styles.filterItemText,
+                activeStatus === "draft" && styles.filterItemTextActive,
+              ]}
+            >
+              Drafts
+            </Text>
+            <View
+              style={[
+                styles.filterItemBadge,
+                activeStatus === "draft" && styles.filterItemBadgeActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.filterItemBadgeText,
+                  activeStatus === "draft" && styles.filterItemBadgeTextActive,
+                ]}
+              >
+                {postCounts.draft}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* Categories Section */}
+      <View style={[styles.sectionContainer, { marginTop: 20 }]}>
+        <Text style={styles.sectionTitle}>CATEGORIES</Text>
+
+        {categories.map((category) => (
+          <TouchableOpacity
+            key={category.name}
+            style={[
+              styles.filterItem,
+              selectedCategory === category.name && styles.filterItemActive,
+            ]}
+            onPress={() =>
+              setSelectedCategory(
+                selectedCategory === category.name ? null : category.name
+              )
+            }
+          >
+            <View style={styles.filterItemContent}>
+              <Text
+                style={[
+                  styles.filterItemText,
+                  selectedCategory === category.name &&
+                    styles.filterItemTextActive,
+                ]}
+              >
+                {category.name}
+              </Text>
+              <View
+                style={[
+                  styles.filterItemBadge,
+                  selectedCategory === category.name &&
+                    styles.filterItemBadgeActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.filterItemBadgeText,
+                    selectedCategory === category.name &&
+                      styles.filterItemBadgeTextActive,
+                  ]}
+                >
+                  {category.count}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
+  );
+
+  // Right Content Column
+  const rightColumn = (
+    <View style={styles.mainContent}>
+      {/* Top Bar with Menu, Search, Title and New Post Button */}
+      <View style={styles.topBar}>
+        <View style={styles.topRow}>
+          {/* Menu Icon */}
+          <TouchableOpacity style={styles.menuButton}>
+            <Text style={styles.menuIcon}>☰</Text>
           </TouchableOpacity>
 
-          {/* Create Button */}
+          {/* Search Bar */}
+          <View style={styles.searchContainer}>
+            <PostSearch
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              onClear={() => setSearchQuery("")}
+            />
+          </View>
+
+          {/* New Post Button */}
           <TouchableOpacity
-            style={styles.createButton}
-            onPress={handleCreateNew}
+            style={styles.newPostButton}
+            onPress={handleNewPost}
           >
-            <Text style={styles.createButtonText}>+ New</Text>
+            <Text style={styles.newPostButtonText}>+ New Post</Text>
+          </TouchableOpacity>
+
+          {/* More Options */}
+          <TouchableOpacity style={styles.moreButton}>
+            <Text style={styles.moreIcon}>⋮</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Title and Sort Row */}
+        <View style={styles.headerRow}>
+          <Text style={styles.mainTitle}>All Posts</Text>
+          <TouchableOpacity style={styles.sortButton}>
+            <Text style={styles.sortButtonText}>Sort by: Most Recent ▼</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Filter Tabs */}
-      <View style={styles.filterTabs}>
-        <TouchableOpacity
-          style={[styles.tab, activeFilter === "all" && styles.activeTab]}
-          onPress={() => setActiveFilter("all")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeFilter === "all" && styles.activeTabText,
-            ]}
-          >
-            All Posts
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeFilter === "drafts" && styles.activeTab]}
-          onPress={() => setActiveFilter("drafts")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeFilter === "drafts" && styles.activeTabText,
-            ]}
-          >
-            📝 Drafts
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeFilter === "published" && styles.activeTab]}
-          onPress={() => setActiveFilter("published")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeFilter === "published" && styles.activeTabText,
-            ]}
-          >
-            ✨ Published
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Posts Grid */}
+      {/* Posts List */}
       <FlatList
         data={filteredPosts}
-        renderItem={renderPost}
+        renderItem={({ item }) => (
+          <PostCard
+            post={{ ...item, tags: item.tags || [] } as any}
+            onPress={() => handlePostPress(item)}
+          />
+        )}
         keyExtractor={(item) => item.id}
-        numColumns={numColumns}
-        key={numColumns} // Force re-render when columns change
-        style={styles.postsList}
-        contentContainerStyle={styles.postsContainer}
+        scrollEnabled={true}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={numColumns > 1 ? styles.row : undefined}
+        contentContainerStyle={styles.postsList}
       />
-
-      {/* Sort Modal */}
-      <Modal
-        visible={showSortModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowSortModal(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setShowSortModal(false)}
-        >
-          <View style={styles.sortModal}>
-            <Text style={styles.modalTitle}>Sort by</Text>
-
-            {(["title", "date", "published"] as SortOption[]).map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.sortOption,
-                  sortBy === option && styles.selectedSortOption,
-                ]}
-                onPress={() => {
-                  setSortBy(option);
-                  setShowSortModal(false);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.sortOptionText,
-                    sortBy === option && styles.selectedSortOptionText,
-                  ]}
-                >
-                  {getSortLabel(option)}
-                </Text>
-                {sortBy === option && <Text style={styles.checkmark}>✓</Text>}
-              </TouchableOpacity>
-            ))}
-          </View>
-        </TouchableOpacity>
-      </Modal>
     </View>
   );
-}
 
-const styles = StyleSheet.create({
-  // Main container with dreamy gradient background
-  container: {
-    flex: 1,
-    backgroundColor: "#FAF7FF", // Fallback color
-  },
+  return (
+    <SafeAreaView style={styles.container}>
+      <TwoColumnLayout
+        leftColumn={leftColumn}
+        rightColumn={rightColumn}
+        leftColumnWidth={220}
+      />
+    </SafeAreaView>
+  );
+};
 
-  // Glass morphism header
-  header: {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    paddingHorizontal: 32,
-    paddingTop: 60,
-    paddingBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.3)",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
+export default PostListScreen;
 
-  headerContent: {
-    flex: 1,
-  },
-
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#5A4FCF",
-    marginBottom: 4,
-  },
-
-  headerSubtitle: {
-    fontSize: 16,
-    color: "rgba(90, 79, 207, 0.7)",
-    fontWeight: "400",
-  },
-
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  // Sort dropdown button
-  sortButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    borderWidth: 1,
-    borderColor: "rgba(124, 111, 212, 0.3)",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-
-  sortButtonText: {
-    color: "#7C6FD4",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-
-  sortArrow: {
-    color: "#7C6FD4",
-    fontSize: 12,
-  },
-
-  // Dreamy pastels create button
-  createButton: {
-    backgroundColor: "#7C6FD4",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
-    shadowColor: "#7C6FD4",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-
-  createButtonText: {
-    color: "white",
-    fontWeight: "600",
-    fontSize: 16,
-  },
-
-  // Glass morphism filter tabs
-  filterTabs: {
-    flexDirection: "row",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.3)",
-  },
-
-  tab: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    marginRight: 12,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
-
-  activeTab: {
-    backgroundColor: "rgba(124, 111, 212, 0.1)",
-    borderColor: "rgba(124, 111, 212, 0.3)",
-  },
-
-  tabText: {
-    fontSize: 14,
-    color: "rgba(90, 79, 207, 0.6)",
-    fontWeight: "500",
-  },
-
-  activeTabText: {
-    color: "#7C6FD4",
-    fontWeight: "600",
-  },
-
-  // Posts grid container
-  postsList: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-
-  postsContainer: {
-    padding: 20,
-  },
-
-  row: {
-    justifyContent: "space-around",
-    paddingHorizontal: 8,
-  },
-
-  // Magazine-style post card container
-  postCardContainer: {
-    margin: 8,
-    width: isTablet ? (width - 80) / 3 - 16 : (width - 64) / 2 - 16,
-  },
-
-  // Glass morphism post cards - magazine style
-  postCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    shadowColor: "#7C6FD4",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 4,
-    overflow: "hidden",
-    height: 300, // Fixed height for all cards
-    width: "100%",
-  },
-
-  // Cover image container
-  imageContainer: {
-    position: "relative",
-    width: "100%",
-    height: 160,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    overflow: "hidden",
-  },
-
-  coverImage: {
-    width: "100%",
-    height: "100%",
-  },
-
-  placeholderImage: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(124, 111, 212, 0.1)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  placeholderText: {
-    fontSize: 48,
-    opacity: 0.6,
-  },
-
-  // Status badge overlay on image
-  statusOverlay: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-  },
-
-  // Card content below image
-  cardContent: {
-    padding: 16,
-    flex: 1,
-    justifyContent: "space-between",
-  },
-
-  postTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#5A4FCF",
-    marginBottom: 8,
-    lineHeight: 20,
-    height: 40, // Fixed height for 2 lines
-  },
-
-  // Dreamy status badges
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 32,
-    minHeight: 32,
-  },
-
-  published: {
-    backgroundColor: "rgba(152, 216, 200, 0.9)",
-    borderColor: "rgba(152, 216, 200, 0.4)",
-  },
-
-  draft: {
-    backgroundColor: "rgba(247, 220, 111, 0.9)",
-    borderColor: "rgba(247, 220, 111, 0.4)",
-  },
-
-  statusText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-
-  publishedText: {
-    color: "#FFFFFF",
-  },
-
-  draftText: {
-    color: "#FFFFFF",
-  },
-
-  postContent: {
-    fontSize: 12,
-    color: "rgba(90, 79, 207, 0.7)",
-    lineHeight: 16,
-    flex: 1,
-    marginBottom: 8,
-  },
-
-  postFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: "auto",
-  },
-
-  postDate: {
-    fontSize: 12,
-    color: "rgba(90, 79, 207, 0.5)",
-    fontWeight: "400",
-  },
-
-  // Decorative dots
-  actionDots: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginLeft: 4,
-    opacity: 0.6,
-  },
-
-  // Sort Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  sortModal: {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: 24,
-    padding: 24,
-    margin: 20,
-    minWidth: 200,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    shadowColor: "#7C6FD4",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#5A4FCF",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-
-  sortOption: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    marginBottom: 4,
-  },
-
-  selectedSortOption: {
-    backgroundColor: "rgba(124, 111, 212, 0.1)",
-  },
-
-  sortOptionText: {
-    fontSize: 16,
-    color: "rgba(90, 79, 207, 0.8)",
-    fontWeight: "500",
-  },
-
-  selectedSortOptionText: {
-    color: "#7C6FD4",
-    fontWeight: "600",
-  },
-
-  checkmark: {
-    fontSize: 16,
-    color: "#7C6FD4",
-    fontWeight: "600",
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    sidebar: {
+      flex: 1,
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.xl,
+      borderRightWidth: 1,
+      borderRightColor: theme.colors.border || "#e0e0e0",
+    },
+    sectionContainer: {
+      marginBottom: theme.spacing.md,
+    },
+    sectionTitle: {
+      ...theme.typography.labelLarge,
+      color: theme.colors.textSecondary || "#999",
+      textTransform: "uppercase",
+      marginBottom: theme.spacing.sm,
+    },
+    filterItem: {
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      marginVertical: 2,
+      borderRadius: theme.radius.md,
+      backgroundColor: "transparent",
+    },
+    filterItemActive: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.md,
+    },
+    filterItemContent: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    filterItemText: {
+      ...theme.typography.bodyLarge,
+      color: theme.colors.text,
+    },
+    filterItemTextActive: {
+      ...theme.typography.bodyLarge,
+      fontWeight: "600",
+      color: theme.colors.textOnPrimary || "#ffffff",
+    },
+    filterItemBadge: {
+      backgroundColor: theme.colors.border || "#e0e0e0",
+      paddingVertical: 3,
+      paddingHorizontal: theme.spacing.sm,
+      borderRadius: theme.radius.lg,
+      minWidth: 24,
+      alignItems: "center",
+    },
+    filterItemBadgeActive: {
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+    },
+    filterItemBadgeText: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.text,
+    },
+    filterItemBadgeTextActive: {
+      color: theme.colors.textOnPrimary || "#ffffff",
+    },
+    mainContent: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    topBar: {
+      backgroundColor: theme.colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border || "#e0e0e0",
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xl,
+    },
+    topRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.xl,
+    },
+    menuButton: {
+      padding: theme.spacing.sm,
+      marginRight: theme.spacing.md,
+    },
+    menuIcon: {
+      fontSize: 18,
+      color: theme.colors.text,
+    },
+    searchContainer: {
+      flex: 1,
+      marginHorizontal: theme.spacing.md,
+    },
+    moreButton: {
+      padding: theme.spacing.sm,
+      marginLeft: theme.spacing.md,
+    },
+    moreIcon: {
+      fontSize: 18,
+      color: theme.colors.text,
+      transform: [{ rotate: "90deg" }],
+    },
+    headerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: theme.spacing.xl,
+      marginBottom: theme.spacing.xl,
+    },
+    mainTitle: {
+      ...theme.typography.titleLarge,
+      color: theme.colors.primary,
+    },
+    newPostButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: 10,
+      paddingHorizontal: theme.spacing.xl,
+      borderRadius: theme.radius.pill,
+      marginHorizontal: theme.spacing.lg,
+    },
+    newPostButtonText: {
+      color: theme.colors.textOnPrimary || "#ffffff",
+      ...theme.typography.bodyLarge,
+      fontWeight: "600",
+    },
+    sortRow: {
+      alignItems: "flex-end",
+      paddingHorizontal: theme.spacing.lg,
+    },
+    sortButton: {
+      paddingVertical: 4,
+      paddingHorizontal: theme.spacing.sm,
+    },
+    sortButtonText: {
+      ...theme.typography.bodyMedium,
+      color: theme.colors.textSecondary,
+      fontWeight: "500",
+    },
+    postsList: {
+      paddingHorizontal: theme.spacing.xl,
+      paddingBottom: theme.spacing.xl,
+    },
+    postCard: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radius.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border || "#e0e0e0",
+      padding: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
+      ...theme.shadow.sm,
+    },
+    postHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      marginBottom: theme.spacing.sm,
+    },
+    postTitle: {
+      ...theme.typography.titleMedium,
+      color: theme.colors.primary,
+      flex: 1,
+      marginRight: theme.spacing.md,
+    },
+    statusBadge: {
+      paddingVertical: 4,
+      paddingHorizontal: 10,
+      borderRadius: theme.radius.lg,
+      backgroundColor: "#f0f0f0",
+    },
+    statusPublished: {
+      backgroundColor: theme.colors.successLight,
+    },
+    statusDraft: {
+      backgroundColor: theme.colors.warningLight,
+    },
+    statusBadgeText: {
+      ...theme.typography.labelLarge,
+      color: "#666",
+    },
+    statusPublishedText: {
+      color: theme.colors.success,
+    },
+    statusDraftText: {
+      color: theme.colors.warning,
+    },
+    postExcerpt: {
+      ...theme.typography.bodyMedium,
+      color: theme.colors.textSecondary,
+      marginBottom: 10,
+    },
+    dateInfo: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.sm,
+      gap: 6,
+    },
+    dateIcon: {
+      ...theme.typography.bodySmall,
+    },
+    dateText: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    dateSeparator: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    tagsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 6,
+    },
+    tag: {
+      backgroundColor: theme.colors.primary + "15",
+      paddingVertical: 4,
+      paddingHorizontal: theme.spacing.sm,
+      borderRadius: theme.radius.lg,
+    },
+    tagText: {
+      ...theme.typography.labelSmall,
+      color: theme.colors.primary,
+    },
+  });

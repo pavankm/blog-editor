@@ -6,6 +6,7 @@ interface BlogPost {
   createdAt: Date;
   updatedAt: Date;
   coverImage?: string; // Optional cover image URL
+  tags?: string[]; // Optional tags/categories
 }
 
 export default BlogPost;
