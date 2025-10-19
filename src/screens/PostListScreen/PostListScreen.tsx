@@ -335,14 +335,36 @@ const PostListScreen: React.FC = () => {
   // Right Content Column
   const rightColumn = (
     <View style={styles.mainContent}>
-      {/* Top Bar with Menu, Search, Title and New Post Button */}
+      {/* Title and Sort Row */}
+      <View style={styles.headerRow}>
+        <Text style={styles.mainTitle}>All Posts</Text>
+        <TouchableOpacity style={styles.sortButton}>
+          <Text style={styles.sortButtonText}>Sort by: Most Recent ▼</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Posts List */}
+      <FlatList
+        data={filteredPosts}
+        renderItem={({ item }) => (
+          <PostCard
+            post={{ ...item, tags: item.tags || [] } as any}
+            onPress={() => handlePostPress(item)}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.postsList}
+      />
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Full Width Header */}
       <View style={styles.topBar}>
         <View style={styles.topRow}>
-          {/* Menu Icon */}
-          <TouchableOpacity style={styles.menuButton}>
-            <Text style={styles.menuIcon}>☰</Text>
-          </TouchableOpacity>
-
           {/* Search Bar */}
           <View style={styles.searchContainer}>
             <PostSearch
@@ -365,39 +387,12 @@ const PostListScreen: React.FC = () => {
             <Text style={styles.moreIcon}>⋮</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Title and Sort Row */}
-        <View style={styles.headerRow}>
-          <Text style={styles.mainTitle}>All Posts</Text>
-          <TouchableOpacity style={styles.sortButton}>
-            <Text style={styles.sortButtonText}>Sort by: Most Recent ▼</Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
-      {/* Posts List */}
-      <FlatList
-        data={filteredPosts}
-        renderItem={({ item }) => (
-          <PostCard
-            post={{ ...item, tags: item.tags || [] } as any}
-            onPress={() => handlePostPress(item)}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-        scrollEnabled={true}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.postsList}
-      />
-    </View>
-  );
-
-  return (
-    <SafeAreaView style={styles.container}>
       <TwoColumnLayout
         leftColumn={leftColumn}
         rightColumn={rightColumn}
-        leftColumnWidth={220}
+        leftColumnWidth={280}
       />
     </SafeAreaView>
   );
@@ -414,22 +409,24 @@ const createStyles = (theme: any) =>
     sidebar: {
       flex: 1,
       backgroundColor: theme.colors.surface,
-      paddingHorizontal: theme.spacing.xl,
-      paddingVertical: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
       borderRightWidth: 1,
       borderRightColor: theme.colors.border || "#e0e0e0",
     },
     sectionContainer: {
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
     },
     sectionTitle: {
-      ...theme.typography.labelLarge,
+      ...theme.typography.labelMedium,
       color: theme.colors.textSecondary || "#999",
       textTransform: "uppercase",
       marginBottom: theme.spacing.sm,
+      fontWeight: "600",
+      letterSpacing: 0.5,
     },
     filterItem: {
-      paddingVertical: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm / 2,
       paddingHorizontal: theme.spacing.md,
       marginVertical: 2,
       borderRadius: theme.radius.md,
@@ -447,11 +444,15 @@ const createStyles = (theme: any) =>
     filterItemText: {
       ...theme.typography.bodyLarge,
       color: theme.colors.text,
+      flex: 1,
+      marginRight: theme.spacing.sm,
     },
     filterItemTextActive: {
       ...theme.typography.bodyLarge,
       fontWeight: "600",
       color: theme.colors.textOnPrimary || "#ffffff",
+      flex: 1,
+      marginRight: theme.spacing.sm,
     },
     filterItemBadge: {
       backgroundColor: theme.colors.border || "#e0e0e0",
@@ -465,8 +466,9 @@ const createStyles = (theme: any) =>
       backgroundColor: "rgba(255, 255, 255, 0.2)",
     },
     filterItemBadgeText: {
-      ...theme.typography.labelMedium,
+      ...theme.typography.labelSmall,
       color: theme.colors.text,
+      fontWeight: "600",
     },
     filterItemBadgeTextActive: {
       color: theme.colors.textOnPrimary || "#ffffff",
@@ -478,22 +480,13 @@ const createStyles = (theme: any) =>
     topBar: {
       backgroundColor: theme.colors.surface,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border || "#e0e0e0",
+      borderBottomColor: "#e2e8f0",
       paddingVertical: theme.spacing.lg,
-      paddingHorizontal: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.lg,
     },
     topRow: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: theme.spacing.xl,
-    },
-    menuButton: {
-      padding: theme.spacing.sm,
-      marginRight: theme.spacing.md,
-    },
-    menuIcon: {
-      fontSize: 18,
-      color: theme.colors.text,
     },
     searchContainer: {
       flex: 1,
@@ -512,19 +505,20 @@ const createStyles = (theme: any) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: theme.spacing.xl,
-      marginBottom: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.lg,
+      marginBottom: theme.spacing.lg,
     },
     mainTitle: {
-      ...theme.typography.titleLarge,
+      ...theme.typography.titleMedium,
       color: theme.colors.primary,
     },
     newPostButton: {
       backgroundColor: theme.colors.primary,
       paddingVertical: 10,
-      paddingHorizontal: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radius.pill,
-      marginHorizontal: theme.spacing.lg,
+      marginHorizontal: theme.spacing.md,
     },
     newPostButtonText: {
       color: theme.colors.textOnPrimary || "#ffffff",
@@ -545,15 +539,15 @@ const createStyles = (theme: any) =>
       fontWeight: "500",
     },
     postsList: {
-      paddingHorizontal: theme.spacing.xl,
-      paddingBottom: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: theme.spacing.lg,
     },
     postCard: {
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radius.lg,
       borderWidth: 1,
       borderColor: theme.colors.border || "#e0e0e0",
-      padding: theme.spacing.xl,
+      padding: theme.spacing.lg,
       marginBottom: theme.spacing.lg,
       ...theme.shadow.sm,
     },
@@ -582,8 +576,9 @@ const createStyles = (theme: any) =>
       backgroundColor: theme.colors.warningLight,
     },
     statusBadgeText: {
-      ...theme.typography.labelLarge,
+      ...theme.typography.labelSmall,
       color: "#666",
+      fontWeight: "600",
     },
     statusPublishedText: {
       color: theme.colors.success,

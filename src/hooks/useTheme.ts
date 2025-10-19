@@ -17,6 +17,12 @@ interface ThemeColors {
   successLight?: string;
   warningLight?: string;
   errorLight?: string;
+  // Additional dreamy pastels colors
+  accent?: string; // Mint Green
+  skyBlue?: string; // Sky Blue
+  softYellow?: string; // Soft Yellow
+  plum?: string; // Plum
+  surfaceHover?: string; // Hover state for surfaces
 }
 
 interface ThemeTypography {
@@ -77,48 +83,54 @@ interface Theme {
 // Light Theme
 const lightTheme: Theme = {
   colors: {
-    primary: "#7c3aed",
-    secondary: "#ec4899",
-    background: "#f8fafc",
-    surface: "#ffffff",
-    text: "#1e293b",
-    textSecondary: "#64748b",
+    primary: "#7C6FD4", // Soft Purple
+    secondary: "#FF9B9B", // Coral Pink
+    background: "#FAF7FF", // Light gradient start
+    surface: "rgba(255, 255, 255, 0.9)", // Glass morphism surface
+    text: "#5A4FCF", // Primary text color
+    textSecondary: "rgba(90, 79, 207, 0.7)", // Secondary text
     textOnPrimary: "#ffffff",
-    border: "#e2e8f0",
-    placeholder: "#94a3b8",
-    inputBackground: "#ffffff",
-    success: "#10b981",
-    error: "#ef4444",
-    warning: "#f59e0b",
-    successLight: "#d4edda",
-    warningLight: "#fff3cd",
-    errorLight: "#fee2e2",
+    border: "rgba(255, 255, 255, 0.3)", // Glass morphism border
+    placeholder: "rgba(90, 79, 207, 0.5)",
+    inputBackground: "rgba(255, 255, 255, 0.9)",
+    success: "#98D8C8", // Mint Green
+    error: "#FF9B9B", // Coral Pink (used for errors too)
+    warning: "#F7DC6F", // Soft Yellow
+    successLight: "#98D8C8", // Mint Green light
+    warningLight: "#F7DC6F", // Soft Yellow light
+    errorLight: "#FFB3B3", // Lightened Coral Pink
+    // Additional dreamy pastels colors
+    accent: "#98D8C8", // Mint Green
+    skyBlue: "#87CEEB", // Sky Blue
+    softYellow: "#F7DC6F", // Soft Yellow
+    plum: "#DDA0DD", // Plum
+    surfaceHover: "rgba(255, 255, 255, 0.95)", // Hover state
   },
   typography: {
-    titleLarge: { fontSize: 28, fontWeight: "700", lineHeight: 36 },
-    titleMedium: { fontSize: 18, fontWeight: "600", lineHeight: 24 },
-    bodyLarge: { fontSize: 14, fontWeight: "500", lineHeight: 20 },
-    bodyMedium: { fontSize: 13, fontWeight: "400", lineHeight: 18 },
-    bodySmall: { fontSize: 12, fontWeight: "400", lineHeight: 16 },
-    labelLarge: { fontSize: 11, fontWeight: "600", letterSpacing: 0.5 },
-    labelMedium: { fontSize: 12, fontWeight: "600" },
-    labelSmall: { fontSize: 11, fontWeight: "500" },
+    titleLarge: { fontSize: 32, fontWeight: "600", lineHeight: 40 }, // largeTitle from guide
+    titleMedium: { fontSize: 24, fontWeight: "600", lineHeight: 32 }, // title from guide
+    bodyLarge: { fontSize: 16, fontWeight: "400", lineHeight: 24 }, // body from guide
+    bodyMedium: { fontSize: 14, fontWeight: "400", lineHeight: 20 }, // caption from guide
+    bodySmall: { fontSize: 12, fontWeight: "400", lineHeight: 16 }, // small from guide
+    labelLarge: { fontSize: 20, fontWeight: "500", letterSpacing: 0.5 }, // headline from guide
+    labelMedium: { fontSize: 14, fontWeight: "400" }, // caption from guide
+    labelSmall: { fontSize: 12, fontWeight: "400" }, // small from guide
   },
   spacing: {
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 20,
-    xxl: 24,
+    xs: 8, // 0.5rem (8px)
+    sm: 16, // 1rem (16px)
+    md: 24, // 1.5rem (24px)
+    lg: 32, // 2rem (32px)
+    xl: 48, // 3rem (48px)
+    xxl: 64, // 4rem (64px)
   },
   radius: {
-    xs: 4,
-    sm: 6,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    pill: 999,
+    xs: 8, // Small elements: 0.5rem (8px)
+    sm: 16, // Small-medium: 1rem (16px)
+    md: 24, // Medium elements: 1.5rem (24px)
+    lg: 32, // Large containers: 2rem (32px)
+    xl: 48, // Extra large: 3rem (48px)
+    pill: 999, // Circular elements: 50% equivalent
   },
   shadow: {
     sm: {
@@ -142,48 +154,54 @@ const lightTheme: Theme = {
 // Dark Theme
 const darkTheme: Theme = {
   colors: {
-    primary: "#a78bfa",
-    secondary: "#f472b6",
-    background: "#0f172a",
-    surface: "#1e293b",
-    text: "#f1f5f9",
-    textSecondary: "#cbd5e1",
+    primary: "#9B8CE8", // Brightened Soft Purple
+    secondary: "#FFB3B3", // Brightened Coral Pink
+    background: "#1A1B2E", // Dark gradient start
+    surface: "rgba(30, 32, 52, 0.6)", // Dark glass morphism surface
+    text: "#B8B5FF", // Brightened text
+    textSecondary: "rgba(184, 181, 255, 0.7)", // Secondary text
     textOnPrimary: "#ffffff",
-    border: "#334155",
-    placeholder: "#64748b",
-    inputBackground: "#1e293b",
-    success: "#34d399",
-    error: "#f87171",
-    warning: "#fbbf24",
-    successLight: "#064e3b",
-    warningLight: "#451a03",
-    errorLight: "#7f1d1d",
+    border: "rgba(184, 181, 255, 0.1)", // Dark glass morphism border
+    placeholder: "rgba(184, 181, 255, 0.5)",
+    inputBackground: "rgba(30, 32, 52, 0.6)",
+    success: "#A8E6D7", // Brightened Mint Green
+    error: "#FFB3B3", // Brightened Coral Pink
+    warning: "#F9E79F", // Brightened Soft Yellow
+    successLight: "rgba(168, 230, 215, 0.2)", // Mint Green with transparency
+    warningLight: "rgba(249, 231, 159, 0.2)", // Soft Yellow with transparency
+    errorLight: "rgba(255, 179, 179, 0.2)", // Coral Pink with transparency
+    // Additional dreamy pastels colors
+    accent: "#A8E6D7", // Brightened Mint Green
+    skyBlue: "#A3D8F0", // Brightened Sky Blue
+    softYellow: "#F9E79F", // Brightened Soft Yellow
+    plum: "#E6B3E6", // Brightened Plum
+    surfaceHover: "rgba(30, 32, 52, 0.8)", // Hover state
   },
   typography: {
-    titleLarge: { fontSize: 28, fontWeight: "700", lineHeight: 36 },
-    titleMedium: { fontSize: 18, fontWeight: "600", lineHeight: 24 },
-    bodyLarge: { fontSize: 14, fontWeight: "500", lineHeight: 20 },
-    bodyMedium: { fontSize: 13, fontWeight: "400", lineHeight: 18 },
-    bodySmall: { fontSize: 12, fontWeight: "400", lineHeight: 16 },
-    labelLarge: { fontSize: 11, fontWeight: "600", letterSpacing: 0.5 },
-    labelMedium: { fontSize: 12, fontWeight: "600" },
-    labelSmall: { fontSize: 11, fontWeight: "500" },
+    titleLarge: { fontSize: 32, fontWeight: "600", lineHeight: 40 }, // largeTitle from guide
+    titleMedium: { fontSize: 24, fontWeight: "600", lineHeight: 32 }, // title from guide
+    bodyLarge: { fontSize: 16, fontWeight: "400", lineHeight: 24 }, // body from guide
+    bodyMedium: { fontSize: 14, fontWeight: "400", lineHeight: 20 }, // caption from guide
+    bodySmall: { fontSize: 12, fontWeight: "400", lineHeight: 16 }, // small from guide
+    labelLarge: { fontSize: 20, fontWeight: "500", letterSpacing: 0.5 }, // headline from guide
+    labelMedium: { fontSize: 14, fontWeight: "400" }, // caption from guide
+    labelSmall: { fontSize: 12, fontWeight: "400" }, // small from guide
   },
   spacing: {
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 20,
-    xxl: 24,
+    xs: 8, // 0.5rem (8px)
+    sm: 16, // 1rem (16px)
+    md: 24, // 1.5rem (24px)
+    lg: 32, // 2rem (32px)
+    xl: 48, // 3rem (48px)
+    xxl: 64, // 4rem (64px)
   },
   radius: {
-    xs: 4,
-    sm: 6,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    pill: 999,
+    xs: 8, // Small elements: 0.5rem (8px)
+    sm: 16, // Small-medium: 1rem (16px)
+    md: 24, // Medium elements: 1.5rem (24px)
+    lg: 32, // Large containers: 2rem (32px)
+    xl: 48, // Extra large: 3rem (48px)
+    pill: 999, // Circular elements: 50% equivalent
   },
   shadow: {
     sm: {
