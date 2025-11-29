@@ -7,6 +7,7 @@ import { useSettingsStore } from "../../store/SettingsContext";
 // Common Components
 import Toolbar from "../../components/common/Toolbar";
 import TwoColumnLayout from "../../components/common/layouts/TwoColumnLayout";
+import NavigationMenu from "../../components/common/NavigationMenu";
 
 // SettingsScreen Specific Components
 import SettingsNavigation from "./SettingsNavigation";
@@ -151,6 +152,11 @@ export const SettingsScreen: React.FC = () => {
         rightButtons={[]}
       />
 
+      {/* Navigation Menu - positioned absolute in top-right */}
+      <View style={styles.navigationMenuContainer}>
+        <NavigationMenu onNavigate={handleNavigate} />
+      </View>
+
       {/* Main Content - Two Column Layout */}
       <TwoColumnLayout
         leftColumn={
@@ -185,6 +191,12 @@ const createStyles = (theme: any) =>
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
+    },
+    navigationMenuContainer: {
+      position: "absolute",
+      top: theme.spacing.sm,
+      right: theme.spacing.sm,
+      zIndex: 10,
     },
   });
 
